@@ -1,0 +1,65 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Layout = "~/_SiteLayout.cshtml";
+  Page.Title = "Your Teams";
+
+  var db = Database.Open("stackRankR");
+  if (IsPost) {
+    db.Execute("INSERT INTO Team (Name, OwnerId) VALUES (@0, @1)", Request["newTeamName"], WebSecurity.CurrentUserId);
+    //Create new team
+    Response.Redirect("~/ViewTeam/" + db.GetLastInsertId());
+  }
+  var teamQuery = db.Query("SELECT Name FROM Team");
+}
+
+@section Scripts {
+  <script>
+    $(function () {
+      $('.newTeamLink').click(function () {
+        $("#dialog").dialog({
+          modal: true,
+          buttons: {
+            "Create": function () {
+              if ($('#newTeamName').val() === '') {
+                $('.error').show();
+              } else {
+                document.forms['newTeam'].submit();
+                $(this).dialog('close');
+              }
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            $(this).parent().appendTo($('#newTeam'));
+          }
+        });
+      });
+
+      $('#newTeamName').keydown(function () {
+        $('.error').hide();
+      });
+    });
+  </script>
+}
+
+
+<h1>Your Teams</h1>
+
+<form method="post" id="newTeam">
+  <a href="#" class="newTeamLink"><span class="newTeam"></span><span class="newTeamText">New Team</span></a>
+  <div id="dialog" title="New Team">
+    <p>Enter a name for your new team:</p>
+    <input type="text" id="newTeamName" name="newTeamName" class="required"/>
+    <span class="error">*</span>
+  </div>
+</form>
+
+
+<ul>
+@foreach (var team in teamQuery) {
+  <li>@team.Name</li>
+}
+</ul>
+

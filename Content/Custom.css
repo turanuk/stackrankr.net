@@ -1,0 +1,40 @@
+.newTeam {
+  margin-left: 10px;
+  display: block;
+  background: url('../Images/users.png') no-repeat;
+  width: 48px;
+  height: 48px;
+}
+
+.newTeamText {
+  display: block;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 7px 0 0 1px;
+}
+
+.newTeamLink {
+  margin-top: 13px;
+  display: block;
+  width: 80px;
+  text-decoration: none;
+}
+
+  .newTeamLink:hover, .newTeamLink:focus {
+    outline: none;
+    text-decoration: none;
+    background-color: #EFEEEF;
+  }
+
+#dialog {
+  display: none;
+}
+
+#newTeamName {
+  width: 200px;
+}
+
+.error {
+  display: none;
+  color: Red;
+}
