@@ -6,10 +6,11 @@
   var db = Database.Open("stackRankR");
   if (IsPost) {
     db.Execute("INSERT INTO Team (Name, OwnerId) VALUES (@0, @1)", Request["newTeamName"], WebSecurity.CurrentUserId);
-    //Create new team
+    var teamId = db.GetLastInsertId();
+
     Response.Redirect("~/ViewTeam/" + db.GetLastInsertId());
   }
-  var teamQuery = db.Query("SELECT Name FROM Team");
+  var teamQuery = db.Query("SELECT Name, Id FROM Team");
 }
 
 @section Scripts {
@@ -44,22 +45,25 @@
   </script>
 }
 
+<h2>Teams</h2>
 
-<h1>Your Teams</h1>
+<div class="contentContainer">
+  @if (teamQuery.Count() == 0) {
+    <p>You have no teams!</p>
+  } else {
+    <ul class="teamList">
+      @foreach (var team in teamQuery) {
+        <li class="team"><a href="~/ViewTeam/@team.Id">@team.Name</a></li>
+      }
+    </ul>
+  }
 
-<form method="post" id="newTeam">
-  <a href="#" class="newTeamLink"><span class="newTeam"></span><span class="newTeamText">New Team</span></a>
-  <div id="dialog" title="New Team">
-    <p>Enter a name for your new team:</p>
-    <input type="text" id="newTeamName" name="newTeamName" class="required"/>
-    <span class="error">*</span>
-  </div>
-</form>
-
-
-<ul>
-@foreach (var team in teamQuery) {
-  <li>@team.Name</li>
-}
-</ul>
-
+  <form method="post" id="newTeam">
+    <a href="javascript:return false;" class="newTeamLink">New Team</a>
+    <div id="dialog" title="New Team">
+      <p>Enter a name for your new team:</p>
+      <input type="text" id="newTeamName" name="newTeamName" class="required"/>
+      <span class="error">*</span>
+    </div>
+  </form>
+</div>
