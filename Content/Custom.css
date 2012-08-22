@@ -114,23 +114,28 @@ a {
 .peopleContainer {
   padding: 0;
   list-style-type: none;
+  min-height: 25px;
 }
 
 .person {
   width: 210px;
   border: 2px solid Grey;
   border-radius: 7px;
-  margin: 0 0 10px 10px;
-  padding: 7px;
+  margin: 0 0 10px 0px;
+  padding: 3px;
   background-color: #deeabd;
-  margin-left: 0px;
+}
+
+.person a {
+  display: block;
+  padding: 4px;
+  border-radius: 3px;
 }
 
 .ui-state-highlight {
-  border: 3px solid red;
+  background-color: #deeabd;
   width: 222px;
-  height: 20px;
-  border-radius: 7px;
+  border-radius: 4px;
   margin-bottom: 10px;
 }
 
