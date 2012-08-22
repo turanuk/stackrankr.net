@@ -82,6 +82,10 @@
       });
 
       $('.peopleContainer').sortable({
+        connectWith: '.peopleContainer',
+        placeholder: 'ui-state-highlight',
+        helper: 'clone',
+        forcePlaceholderSize: true
       });
     });
   </script>
@@ -99,10 +103,9 @@
             var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
             foreach (var person in people) {
             <li class="person ui-state-default">
-              @*<a href="javascript: return false" class="modifyPerson" data-personId="@person.Id">
-                
-              </a>*@
-              @person.Description
+              <a href="javascript: return false" class="modifyPerson" data-personId="@person.Id">
+                @person.Description
+              </a>
             </li>
             }
           }
