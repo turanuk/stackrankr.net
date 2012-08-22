@@ -112,7 +112,8 @@ a {
 }
 
 .peopleContainer {
-  margin-top: 13px;
+  padding: 0;
+  list-style-type: none;
 }
 
 .person {
@@ -123,6 +124,14 @@ a {
   padding: 7px;
   background-color: #deeabd;
   margin-left: 0px;
+}
+
+.ui-state-highlight {
+  border: 3px solid red;
+  width: 222px;
+  height: 20px;
+  border-radius: 7px;
+  margin-bottom: 10px;
 }
 
 ul {

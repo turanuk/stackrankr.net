@@ -81,7 +81,8 @@
         alert('hi');
       });
 
-      $('.peopleContainer').sortable();
+      $('.peopleContainer').sortable({
+      });
     });
   </script>
 }
@@ -97,10 +98,11 @@
           @{
             var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
             foreach (var person in people) {
-            <li class="person">
-              <a href="javascript: return false" class="modifyPerson" data-personId="@person.Id">
-                @person.Description
-              </a>
+            <li class="person ui-state-default">
+              @*<a href="javascript: return false" class="modifyPerson" data-personId="@person.Id">
+                
+              </a>*@
+              @person.Description
             </li>
             }
           }
