@@ -1,8 +1,76 @@
-﻿@{
+﻿@* Note: This page follows "Very Bad Practices©" for a single-page application for better editor coverage  *@
+
+@{
+  WebSecurity.RequireAuthenticatedUser();
+  Layout = "~/_SiteLayout.cshtml";
   var teamId = UrlData[0].AsInt();
   if (teamId == 0) {
     Response.Redirect("~/Error");
   }
+  var db = Database.Open("stackRankR");
+  if (db.QuerySingle("SELECT * FROM Team WHERE Id = @0", teamId) == null) {
+    Response.Redirect("~/Error");
+  }
+  var rankings = db.Query("SELECT * FROM Ranking WHERE TeamId = @0", teamId);
 }
 
+@section Scripts {
+  <script>
+    $(function () {
+      $('.rankingTitle').click(function () {
+        var rankingText = $(this).html();
+        var rankingId = $(this).attr('data-rankingId');
+        var rankingTitleElement = $(this);
+        $("#rankingDialog").dialog({
+          modal: true,
+          buttons: {
+            "Update": function () {
+              var newRankingText = $('#newRankingName').val();
+              if (newRankingText === '') {
+                $('.error').show();
+              } else {
+                $.post('/endpoints/updateranking', { RankingId: rankingId, RankingText: newRankingText }, function () {
+                  rankingTitleElement.html(newRankingText);
+                });
+                $(this).dialog('close');
+              }
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            $('#newRankingName').val(rankingText);
+            $('#newRankingName').select();
+          }
+        });
+      })
+    });
+  </script>
+}
 
+@if (rankings.Count() == 0) {
+  <h2>No rankings yet!</h2>
+} else {
+  <div class="rankingContainer">
+    @foreach (var ranking in rankings) {
+      <div class="ranking">
+        <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
+        @{
+          var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
+          foreach (var person in people) {
+            <div class="person">
+              @person.Description
+            </div>
+          }
+        }
+      <a href="javascript: return false;" class="addPerson">Add a person</a>
+      </div>
+    }
+  </div>
+}
+
+<div id="rankingDialog">
+  <p>Enter the new name for this ranking:</p>
+  <input id="newRankingName" type="text" class="dialogInput"/><span class="error">*</span>
+</div>

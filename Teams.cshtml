@@ -7,8 +7,10 @@
   if (IsPost) {
     db.Execute("INSERT INTO Team (Name, OwnerId) VALUES (@0, @1)", Request["newTeamName"], WebSecurity.CurrentUserId);
     var teamId = db.GetLastInsertId();
-
-    Response.Redirect("~/ViewTeam/" + db.GetLastInsertId());
+    for (int i = 1; i <= 3; i++) {
+      db.Execute("INSERT INTO Ranking (Name, TeamId) VALUES (@0, @1)", i, teamId);
+    }
+    Response.Redirect("~/ViewTeam/" + teamId);
   }
   var teamQuery = db.Query("SELECT Name, Id FROM Team");
 }
@@ -50,6 +52,7 @@
 <div class="contentContainer">
   @if (teamQuery.Count() == 0) {
     <p>You have no teams!</p>
+    <div class="medSpacer"></div>
   } else {
     <ul class="teamList">
       @foreach (var team in teamQuery) {
@@ -59,10 +62,10 @@
   }
 
   <form method="post" id="newTeam">
-    <a href="javascript:return false;" class="newTeamLink">New Team</a>
+    <a href="javascript:return false;" class="linkButton">New Team</a>
     <div id="dialog" title="New Team">
       <p>Enter a name for your new team:</p>
-      <input type="text" id="newTeamName" name="newTeamName" class="required"/>
+      <input type="text" id="newTeamName" name="newTeamName" class="dialogInput"/>
       <span class="error">*</span>
     </div>
   </form>
