@@ -15,7 +15,7 @@
     //TODO: Support multiple users of a single board
     if (team.OwnerId == WebSecurity.CurrentUserId) {
       db.Execute("INSERT INTO Person (Description, RankingId) VALUES (@0, @1)", personDescription, rankingId);
-      Response.SetStatus(200);
+      Response.Write(db.GetLastInsertId());
     } else {
       Response.SetStatus(401);
     }

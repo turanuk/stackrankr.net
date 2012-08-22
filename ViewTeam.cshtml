@@ -57,8 +57,8 @@
               if (newPersonDesc === '') {
                 $('.error').show();
               } else {
-                $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function () {
-                  rankingContainer.append('<div class="person">' + newPersonDesc + '</div>')
+                $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
+                  rankingContainer.append('<a href="javascript: return false" class="modifyPerson" data-personId="' + data + '"><div class="person">' + newPersonDesc + '</div></a>')
                 });
                 $(this).dialog('close');
               }
@@ -68,7 +68,7 @@
             }
           },
           open: function () {
-            //hook up enter keypress event
+            $('#newPersonDesc').val('');
           }
         });
       });
@@ -87,9 +87,11 @@
           @{
             var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
             foreach (var person in people) {
-              <div class="person">
-                @person.Description
-              </div>
+              <a href="javascript: return false" class="modifyPerson" data-personId="@person.Id">
+                <div class="person">
+                  @person.Description
+                </div>
+              </a>
             }
           }
         </div>

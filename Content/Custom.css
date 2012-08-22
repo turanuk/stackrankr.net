@@ -90,6 +90,7 @@ a {
 
   .addPerson {
     display: block;
+    border: 2px solid #a9bc6f;
     border-top: 2px solid #deeabd;
     margin: 30px auto 0 auto;
     padding: 7px;
@@ -101,6 +102,7 @@ a {
   .addPerson:hover, .addPerson:focus {
     outline: none;
     font-weight: bold;
+    border: 2px solid Black;
     background-color: #deeabd;
   }
 
