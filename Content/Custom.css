@@ -85,7 +85,7 @@ a {
 
   .ranking h3 {
     padding: 0;
-    margin:  7px 0 0 7px;
+    margin:  13px 0 0 13px;
   }
 
   .addPerson {
@@ -104,6 +104,19 @@ a {
     background-color: #deeabd;
   }
 
-#rankingDialog {
+.dialogContainer {
   display: none;
+}
+
+.peopleContainer {
+  margin-top: 13px;
+}
+
+.person {
+  width: 210px;
+  border: 2px solid Grey;
+  border-radius: 7px;
+  margin: 0 0 10px 10px;
+  padding: 7px;
+  background-color: #deeabd;
 }

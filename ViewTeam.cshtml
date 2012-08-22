@@ -44,7 +44,34 @@
             $('#newRankingName').select();
           }
         });
-      })
+      });
+
+      $('.addPerson').click(function () {
+        var rankingId = $(this).attr('data-rankingId');
+        var rankingContainer = $(this).prev('.peopleContainer');
+        $("#personDialog").dialog({
+          modal: true,
+          buttons: {
+            "Insert": function () {
+              var newPersonDesc = $('#newPersonDesc').val();
+              if (newPersonDesc === '') {
+                $('.error').show();
+              } else {
+                $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function () {
+                  rankingContainer.append('<div class="person">' + newPersonDesc + '</div>')
+                });
+                $(this).dialog('close');
+              }
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            //hook up enter keypress event
+          }
+        });
+      });
     });
   </script>
 }
@@ -54,23 +81,30 @@
 } else {
   <div class="rankingContainer">
     @foreach (var ranking in rankings) {
-      <div class="ranking">
+      <div class="ranking" data-rankingId="@ranking.Id">
         <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
-        @{
-          var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
-          foreach (var person in people) {
-            <div class="person">
-              @person.Description
-            </div>
+        <div class="peopleContainer">
+          @{
+            var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
+            foreach (var person in people) {
+              <div class="person">
+                @person.Description
+              </div>
+            }
           }
-        }
-      <a href="javascript: return false;" class="addPerson">Add a person</a>
+        </div>
+        <a href="javascript: return false;" data-rankingId="@ranking.Id" class="addPerson">Add a person</a>
       </div>
     }
   </div>
 }
 
-<div id="rankingDialog">
+<div id="rankingDialog" class="dialogContainer" title="Ranking Name">
   <p>Enter the new name for this ranking:</p>
   <input id="newRankingName" type="text" class="dialogInput"/><span class="error">*</span>
+</div>
+
+<div id="personDialog" class="dialogContainer" title="Person Description">
+  <p>Enter the description for this person</p>
+  <input id="newPersonDesc" type="text" class="dialogInput"/><span class="error">*</span>
 </div>
