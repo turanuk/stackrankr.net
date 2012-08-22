@@ -18,9 +18,11 @@
 @section Scripts {
   <script>
     $(function () {
-      $('.newTeamLink').click(function () {
+      $('.linkButton').click(function () {
         $("#dialog").dialog({
           modal: true,
+          draggable: false,
+          resizable: false,
           buttons: {
             "Create": function () {
               if ($('#newTeamName').val() === '') {

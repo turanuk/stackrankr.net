@@ -23,6 +23,8 @@
         var rankingTitleElement = $(this);
         $("#rankingDialog").dialog({
           modal: true,
+          draggable: false,
+          resizable: false,
           buttons: {
             "Update": function () {
               var newRankingText = $('#newRankingName').val();
@@ -51,6 +53,8 @@
         var rankingContainer = $(this).prev('.peopleContainer');
         $("#personDialog").dialog({
           modal: true,
+          draggable: false,
+          resizable: false,
           buttons: {
             "Insert": function () {
               var newPersonDesc = $('#newPersonDesc').val();
@@ -72,6 +76,12 @@
           }
         });
       });
+
+      $('.modifyPerson').click(function () {
+        alert('hi');
+      });
+
+      $('.peopleContainer').sortable();
     });
   </script>
 }
@@ -83,18 +93,18 @@
     @foreach (var ranking in rankings) {
       <div class="ranking" data-rankingId="@ranking.Id">
         <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
-        <div class="peopleContainer">
+        <ul class="peopleContainer">
           @{
             var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
             foreach (var person in people) {
+            <li class="person">
               <a href="javascript: return false" class="modifyPerson" data-personId="@person.Id">
-                <div class="person">
-                  @person.Description
-                </div>
+                @person.Description
               </a>
+            </li>
             }
           }
-        </div>
+        </ul>
         <a href="javascript: return false;" data-rankingId="@ranking.Id" class="addPerson">Add a person</a>
       </div>
     }
@@ -106,7 +116,12 @@
   <input id="newRankingName" type="text" class="dialogInput"/><span class="error">*</span>
 </div>
 
-<div id="personDialog" class="dialogContainer" title="Person Description">
+<div id="personDialog" class="dialogContainer" title="Add a Person">
   <p>Enter the description for this person</p>
   <input id="newPersonDesc" type="text" class="dialogInput"/><span class="error">*</span>
+</div>
+
+<div id="editPersonDialog" class="dialogContainer" title="Edit Person">
+  <p>Enter the updated description for this person</p>
+  <input id="editedPersonDesc" type="text" class="dialogInput"/><span class="error">*</span>
 </div>
