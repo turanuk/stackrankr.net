@@ -62,7 +62,7 @@
                 $('.error').show();
               } else {
                 $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
-                  rankingContainer.append('<a href="javascript: return false" class="modifyPerson" data-personId="' + data + '"><div class="person">' + newPersonDesc + '</div></a>')
+                  rankingContainer.append('<li class="person ui-state-default" data-personId="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson">' + newPersonDesc + '</a></li>')
                 });
                 $(this).dialog('close');
               }
@@ -78,16 +78,46 @@
       });
 
       $('.modifyPerson').click(function () {
-        alert('hi');
-      });
+        var personDescription = $(this).html();
+        var personDescriptionDom = $(this);
+        var personDom = $(this).parent('.person');
+        var personId = personDom.attr('data-personId');
+        var rankingId = personDom.attr('data-rankingId');
+        $("#editPersonDialog").dialog({
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons: {
+            "Update": function () {
+              var editPersonDesc = $('#editedPersonDesc').val();
+              if (editPersonDesc === '') {
+                $('.error').show();
+              } else {
+                $.post('/endpoints/updatePerson', { PersonId: personId, RankingId: rankingId, PersonDescription: editPersonDesc }, function () {
+                  personDescriptionDom.html(editPersonDesc);
+                });
+                $(this).dialog('close');
+              }
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            $('#editedPersonDesc').val(personDescription);
+            $('#editedPersonDesc').select();
+          }
+        });
+        });
 
-      $('.peopleContainer').sortable({
-        connectWith: '.peopleContainer',
+      $('.peopleContainer').sortable(
+        {
+          connectWith: '.peopleContainer',
         placeholder: 'ui-state-highlight',
         helper: 'clone',
         forcePlaceholderSize: true
-      });
-    });
+        });
+     });
   </script>
 }
 
@@ -102,10 +132,8 @@
           @{
             var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
             foreach (var person in people) {
-            <li class="person ui-state-default">
-              <a href="javascript: return false" class="modifyPerson" data-personId="@person.Id">
-                @person.Description
-              </a>
+            <li class="person ui-state-default" data-personId="@person.Id" data-rankingId="@ranking.Id">
+              <a href="javascript: return false" class="modifyPerson">@person.Description</a>
             </li>
             }
           }
