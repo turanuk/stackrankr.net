@@ -54,21 +54,22 @@ a {
   font-size: 1.3em;
   font-weight: bold;
   list-style: none;
-  padding-left: 3px;
-  width: 80%;
+  padding: 0;
+  margin: 13px 0 0 0;
+  width: 50%;
   margin-bottom: 30px;
 }
 
   .teamList li {
-    border-bottom: 1px solid #a9bc6f;
-    padding: 7px 0 7px 0;
+    padding: 3px 0 3px 0;
     margin: 0;
   }
 
   .teamList li a {
     text-decoration: none;
+    position: relative;
     display: block;
-    padding: 3px;
+    padding: 5px;
   }
 
   .teamList li a:hover, .teamList li a:focus {
@@ -80,7 +81,28 @@ a {
   height: 7px;
 }
 
+.largeSpacer {
+  height: 20px;
+}
+
+.teamName {
+  text-align: left;
+}
+
+.modifyButton {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: url(../Images/process.png) no-repeat;
+  top: 5px;
+  right: 3px;
+}
+
 /* Team View */
+.avatar {
+  margin-top: 20px;
+}
+
 .rankingContainer {
   list-style: none;
   margin: 20px 0 0 20px;

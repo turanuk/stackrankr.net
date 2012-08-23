@@ -110,13 +110,12 @@
         });
         });
 
-      $('.peopleContainer').sortable(
-        {
-          connectWith: '.peopleContainer',
+      $('.peopleContainer').sortable({
+        connectWith: '.peopleContainer',
         placeholder: 'ui-state-highlight',
         helper: 'clone',
         forcePlaceholderSize: true
-        });
+       });
      });
   </script>
 }
@@ -150,11 +149,11 @@
 </div>
 
 <div id="personDialog" class="dialogContainer" title="Add a Person">
-  <p>Enter the description for this person</p>
+  <p>Enter the description for this person:</p>
   <input id="newPersonDesc" type="text" class="dialogInput"/><span class="error">*</span>
 </div>
 
 <div id="editPersonDialog" class="dialogContainer" title="Edit Person">
-  <p>Enter the updated description for this person</p>
+  <p>Enter the updated description for this person:</p>
   <input id="editedPersonDesc" type="text" class="dialogInput"/><span class="error">*</span>
 </div>
