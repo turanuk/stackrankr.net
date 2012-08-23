@@ -52,23 +52,28 @@
 <h2>Teams</h2>
 
 <div class="contentContainer">
-  @if (teamQuery.Count() == 0) {
-    <p>You have no teams!</p>
-    <div class="medSpacer"></div>
-  } else {
-    <ul class="teamList">
-      @foreach (var team in teamQuery) {
-        <li class="team"><a href="~/ViewTeam/@team.Id">@team.Name</a></li>
-      }
-    </ul>
-  }
+  <div class="leftContent">
+    @if (teamQuery.Count() == 0) {
+      <p>You have no teams!</p>
+      <div class="medSpacer"></div>
+    } else {
+      <ul class="teamList">
+        @foreach (var team in teamQuery) {
+          <li class="team"><a href="~/ViewTeam/@team.Id">@team.Name</a></li>
+        }
+      </ul>
+    }
 
-  <form method="post" id="newTeam">
-    <a href="javascript:return false;" class="linkButton">New Team</a>
-    <div id="dialog" title="New Team">
-      <p>Enter a name for your new team:</p>
-      <input type="text" id="newTeamName" name="newTeamName" class="dialogInput"/>
-      <span class="error">*</span>
-    </div>
-  </form>
+    <form method="post" id="newTeam">
+      <a href="javascript:return false;" class="linkButton">New Team</a>
+      <div id="dialog" title="New Team">
+        <p>Enter a name for your new team:</p>
+        <input type="text" id="newTeamName" name="newTeamName" class="dialogInput"/>
+        <span class="error">*</span>
+      </div>
+    </form>
+  </div>
+  <div class="rightContent">
+    <img alt="avatar" src="">
+  </div>
 </div>
