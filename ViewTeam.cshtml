@@ -108,14 +108,15 @@
             $('#editedPersonDesc').select();
           }
         });
-        });
+      });
 
-      $('.peopleContainer').sortable({
+      $('.peopleContainer').sortable(
+      {
         connectWith: '.peopleContainer',
         placeholder: 'ui-state-highlight',
         helper: 'clone',
         forcePlaceholderSize: true
-       });
+      });
      });
   </script>
 }

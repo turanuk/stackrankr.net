@@ -5,20 +5,20 @@
 
   var db = Database.Open("stackRankR");
   if (IsPost) {
-    db.Execute("INSERT INTO Team (Name, OwnerId) VALUES (@0, @1)", Request["newTeamName"], WebSecurity.CurrentUserId);
+    db.Execute("INSERT INTO Team (Name, OwnerId, Display) VALUES (@0, @1, @2)", Request["newTeamName"], WebSecurity.CurrentUserId, true);
     var teamId = db.GetLastInsertId();
     for (int i = 1; i <= 3; i++) {
       db.Execute("INSERT INTO Ranking (Name, TeamId) VALUES (@0, @1)", i, teamId);
     }
     Response.Redirect("~/ViewTeam/" + teamId);
   }
-  var teamQuery = db.Query("SELECT Name, Id FROM Team");
+  var teamQuery = db.Query("SELECT Name, Id, Display FROM Team");
 }
 
 @section Scripts {
   <script>
     $(function () {
-      $('.linkButton').click(function () {
+      $('#newTeamButton').click(function () {
         $("#dialog").dialog({
           modal: true,
           draggable: false,
@@ -38,6 +38,7 @@
           },
           open: function () {
             $(this).parent().appendTo($('#newTeam'));
+            $('#newTeamName').select();
           }
         });
       });
@@ -49,6 +50,8 @@
       $('.modifyButton').click(function (e) {
         e.preventDefault();
         var modifyButtonDom = $(this);
+        var teamId = modifyButtonDom.attr('data-teamId');
+        var teamName = modifyButtonDom.attr('data-teamName');
         $("#editTeamDialog").dialog({
           modal: true,
           draggable: false,
@@ -59,8 +62,8 @@
               if (editTeamName === '') {
                 $('.error').show();
               } else {
-                $.post('/endpoints/updateteam', { TeamId: modifyButtonDom.attr('data-teamId'), NewTeamName: editTeamName }, function (data) {
-                  modifyButtonDom.next('.teamName').html(editTeamName);
+                $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
+                  modifyButtonDom.prev('.teamName').html(editTeamName);
                 });
                 $(this).dialog('close');
               }
@@ -72,10 +75,28 @@
           open: function () {
             $('#editTeamName').val(modifyButtonDom.attr('data-teamName'));
             $('#editTeamName').select();
+            var thisDialog = $(this);
+            $('#deleteTeam').click(function () {
+              if ($(this).html() === 'Sure?') {
+                $.post('/endpoints/deleteteam', { TeamId: teamId }, function (data) {
+                  modifyButtonDom.parents('.team').fadeOut(50, function () {
+                    var undoButton = '<li class="team deletedTeam"><a class="undo" href="javascript:return false" data-teamId="' + teamId + '"><span>Deleted ' + teamName + '.</span><span class="undoButton">Click to Undo</span></a></li>';
+                    modifyButtonDom.parents('.team').before(undoButton);
+                  });
+                  thisDialog.dialog('close');
+                });
+              } else {
+                $(this).html('Sure?');
+              }
+            });
+          },
+          close: function() {
+            $('#deleteTeam').html('Delete');
+            $('#deleteTeam').unbind('click');
           }
-        });
-      })
-    });
+          });
+     })
+     });
   </script>
 }
 
@@ -87,18 +108,21 @@
   } else {
     <ul class="teamList">
       @foreach (var team in teamQuery) {
-        <li class="team">
-          <a href="~/ViewTeam/@team.Id" class="teamName">
-            <span class="teamName">@team.Name</span>
-            <span class="modifyButton" data-teamId="@team.Id" data-teamName="@team.Name"></span>
-          </a>
-        </li>
+        if (team.Display == true) {
+          <li class="team">
+            <a href="~/ViewTeam/@team.Id" class="teamName">
+              <span class="teamName">@team.Name</span>
+              <span class="modifyButton" data-teamId="@team.Id" data-teamName="@team.Name"></span>
+            </a>
+          </li>
+        }
       }
+      
     </ul>
   }
 
   <form method="post" id="newTeam">
-    <a href="javascript:return false;" class="linkButton">New Team</a>
+    <a href="javascript:return false;" class="linkButton" id="newTeamButton">New Team</a>
     <div id="dialog" title="New Team">
       <p>Enter a name for your new team:</p>
       <input type="text" id="newTeamName" name="newTeamName" class="dialogInput"/>
@@ -110,8 +134,8 @@
 <div id="editTeamDialog" class="dialogContainer" title="Edit Team">
   <p>Enter the new name for this team:</p>
   <input id="editTeamName" type="text" class="dialogInput"/><span class="error">*</span>
-  <p>Or click below to delete the team</p>
+  <p>Or click below to delete the team:</p>
   <div class="medSpacer"></div>
-  <a href="javascript:return false;" class="linkButton">Delete Team</a>
+  <a id="deleteTeam" href="javascript:return false;" class="linkButton deleteButton">Delete Team</a>
   <div class="largeSpacer"></div>
 </div>

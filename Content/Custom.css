@@ -8,12 +8,18 @@ a {
 }
 
 .linkButton {
-  border:  3px solid black;
+  font-size: 1.0em;
+  font-family: 'Open Sans';
+  border: 3px solid black;
   text-decoration: none;
   font-weight: bold;
   text-transform: uppercase;
   padding: 5px;
   background-color: #d8eb9f;
+}
+
+.deleteButton {
+  font-size: 0.95em;
 }
 
   .linkButton:hover, .linkButton:focus {
@@ -49,6 +55,10 @@ a {
   float: left;
 }
 
+#newTeamButton {
+  font-family: Verdana, Helvetica, sans-serif;
+}
+
 .teamList {
   font-family: 'Open Sans';
   font-size: 1.3em;
@@ -56,8 +66,8 @@ a {
   list-style: none;
   padding: 0;
   margin: 13px 0 0 0;
-  width: 50%;
-  margin-bottom: 30px;
+  width: 30%;
+  margin-bottom: 20px;
 }
 
   .teamList li {
@@ -89,13 +99,32 @@ a {
   text-align: left;
 }
 
-.modifyButton {
+.teamList li a:hover .modifyButton {
   position: absolute;
   width: 24px;
   height: 24px;
+  opacity: 0.65;
   background: url(../Images/process.png) no-repeat;
   top: 5px;
-  right: 3px;
+  right: 5px;
+}
+
+.deletedTeam a {
+  font-size: 0.6em;
+  background:  #e86363;
+}
+
+.deletedTeam a:hover {
+  background: #df9595;
+}
+
+.undo {
+  position: relative;
+}
+
+.undoButton {
+  position: absolute;
+  right: 7px;
 }
 
 /* Team View */
