@@ -12,7 +12,7 @@
     }
     Response.Redirect("~/ViewTeam/" + teamId);
   }
-  var teamQuery = db.Query("SELECT Name, Id, Display FROM Team");
+  var teamQuery = db.Query("SELECT Name, Id, Display FROM Team WHERE OwnerId = @0", WebSecurity.CurrentUserId);
 }
 
 @section Scripts {
