@@ -62,7 +62,7 @@
                 $('.error').show();
               } else {
                 $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
-                  rankingContainer.append('<li class="person ui-state-default" data-personId="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson">' + newPersonDesc + '</a></li>')
+                  rankingContainer.append('<li class="person ui-state-default" data-personId="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc + '</span></a></li>')
                 });
                 $(this).dialog('close');
               }
@@ -79,7 +79,7 @@
             newPersonDesc.keydown(function (e) {
               if (e.keyCode == 13) {
                 $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc.val() }, function (data) {
-                  rankingContainer.append('<li class="person ui-state-default" data-personId="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson">' + newPersonDesc.val() + '</a></li>')
+                  rankingContainer.append('<li class="person ui-state-default" data-personId="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc.val() + '</span></a></li>')
                 });
                 thisDialog.dialog('close');
               }
@@ -91,7 +91,7 @@
         });
       });
 
-      $('.modifyPerson').click(function () {
+      $('.modifyPerson').live('click', function () {
         var personDescription = $(this).children('span').html();
         var personDescriptionDom = $(this).children('span');
         var personDom = $(this).parent('.person');
@@ -132,10 +132,9 @@
             });
             $('#deletePerson').click(function () {
               if ($(this).html() === 'Sure?') {
-                $.post('/endpoints/deleteteam', { TeamId: teamId }, function (data) {
-                  modifyButtonDom.parents('.team').fadeOut(50, function () {
-                    var undoButton = '<li class="team deletedTeam"><a class="undo" href="javascript:return false" data-teamId="' + teamId + '"><span>Deleted ' + teamName + '.</span><span class="undoButton">Click to Undo</span></a></li>';
-                    modifyButtonDom.parents('.team').before(undoButton);
+                $.post('/endpoints/deleteperson', { PersonId: personId }, function () {
+                  personDom.fadeOut(100, function () {
+                    $(this).remove();
                   });
                   thisDialog.dialog('close');
                 });
@@ -145,6 +144,7 @@
             });
           },
           close: function () {
+            $('#deletePerson').html('Delete');
             $('#editedPersonDesc').unbind('keydown');
             $('#deletePerson').unbind('click');
           }
