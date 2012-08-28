@@ -73,9 +73,18 @@
             }
           },
           open: function () {
+            var thisDialog = $(this);
             $('#editTeamName').val(modifyButtonDom.attr('data-teamName'));
             $('#editTeamName').select();
-            var thisDialog = $(this);
+            $('#editTeamName').keydown(function (e) {
+              editTeamName = $('#editTeamName').val();
+              if (e.keyCode === 13) {
+                $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
+                  modifyButtonDom.prev('.teamName').html(editTeamName);
+                });
+                thisDialog.dialog('close');
+              }
+            });
             $('#deleteTeam').click(function () {
               if ($(this).html() === 'Sure?') {
                 $.post('/endpoints/deleteteam', { TeamId: teamId }, function (data) {
@@ -90,13 +99,14 @@
               }
             });
           },
-          close: function() {
+          close: function () {
             $('#deleteTeam').html('Delete');
             $('#deleteTeam').unbind('click');
+            $('#editTeamName').unbind('keydown');
           }
-          });
-     })
-     });
+        });
+      })
+    });
   </script>
 }
 
