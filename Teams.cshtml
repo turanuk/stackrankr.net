@@ -81,6 +81,7 @@
               if (e.keyCode === 13) {
                 $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
                   modifyButtonDom.prev('.teamName').html(editTeamName);
+                  modifyButtonDom.attr('data-teamName', editTeamName);
                 });
                 thisDialog.dialog('close');
               }

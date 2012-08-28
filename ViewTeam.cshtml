@@ -42,8 +42,21 @@
             }
           },
           open: function () {
-            $('#newRankingName').val(rankingText);
-            $('#newRankingName').select();
+            var thisDialog = $(this);
+            var newRankingName = $('#newRankingName');
+            newRankingName.val(rankingText);
+            newRankingName.select();
+            newRankingName.keydown(function (e) {
+              if (e.keyCode == 13) {
+                $.post('/endpoints/updateranking', { RankingId: rankingId, RankingText: newRankingName.val() }, function () {
+                  rankingTitleElement.html(newRankingName.val());
+                });
+                thisDialog.dialog('close');
+              }
+            });
+          },
+          close: function () {
+            $('#newRankingName').unbind('keydown');
           }
         });
       });
