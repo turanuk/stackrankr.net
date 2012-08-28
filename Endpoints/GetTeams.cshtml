@@ -1,0 +1,18 @@
+﻿@{
+  WebSecurity.RequireAuthenticatedUser();
+  Response.AddHeader("Cache-Control", "no-cache");
+  var db = Database.Open("stackRankR");
+  var teamQuery = db.Query("SELECT Name, Id, Display FROM Team WHERE OwnerId = @0", WebSecurity.CurrentUserId);
+
+  var teamDict = new Dictionary<string, string>();
+  foreach (var team in teamQuery) {
+    if (team.Display == true) {
+      teamDict.Add(Convert.ToString(team.Id), team.Name);
+    }
+  }
+  if (teamDict.Count > 0) {
+    Response.Write(Json.Encode(teamDict));
+  } else {
+    Response.SetStatus(401);
+  }
+}
