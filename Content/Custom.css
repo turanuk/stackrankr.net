@@ -178,18 +178,23 @@ a {
 }
 
 .person {
-  width: 210px;
+  width: 216px;
   border: 2px solid Grey;
-  border-radius: 7px;
   margin: 0 0 7px 0px;
-  padding: 3px;
+  padding: 0;
   background-color: #deeabd;
+  border-radius: 7px;
 }
 
 .person a {
   display: block;
   padding: 4px;
-  border-radius: 3px;
+  border-radius: 4px;
+}
+
+.person a span {
+  display: block;
+  margin: 4px;
 }
 
 .ui-state-highlight {

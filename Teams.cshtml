@@ -89,8 +89,14 @@
               if ($(this).html() === 'Sure?') {
                 $.post('/endpoints/deleteteam', { TeamId: teamId }, function (data) {
                   modifyButtonDom.parents('.team').fadeOut(50, function () {
-                    var undoButton = '<li class="team deletedTeam"><a class="undo" href="javascript:return false" data-teamId="' + teamId + '"><span>Deleted ' + teamName + '.</span><span class="undoButton">Click to Undo</span></a></li>';
+                    var undoButton = '<li class="team deletedTeam" id="deletedTeamContainer' + teamId + '"><a class="undo" id="undo' + teamId + '" href="javascript:return false" data-teamId="' + teamId + '"><span>Deleted ' + teamName + '.</span><span class="undoButton">Click to Undo</span></a></li>';
                     modifyButtonDom.parents('.team').before(undoButton);
+                    $('#undo' + teamId).click(function () {
+                      $.post('/endpoints/undeleteteam', { TeamId: teamId }, function () {
+                        $('#deletedTeamContainer' + teamId).remove();
+                        modifyButtonDom.parents('.team').fadeIn();
+                      });
+                    });
                   });
                   thisDialog.dialog('close');
                 });
