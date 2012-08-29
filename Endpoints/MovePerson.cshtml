@@ -23,6 +23,12 @@
         //Moving down, so we need to modify IDs that occur before. Otherwise, we are moving up, so we need to shift IDs that occur afterwards
         sortDir = "DESC";
       }
+
+      //It's also possible that this is an insertion from another ranking. In that case, we are always shifting down, so shift IDs that occur afterwards.
+      if (person.RankingId != rankingId) {
+        sortDir = "ASC";
+      }
+
       //Temporarily set the index to -1 so the new entry can be ordered correctly
       db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", -1, personId);
       //Now need to update the order within the rankings to preserve the correct order on re-rendering
