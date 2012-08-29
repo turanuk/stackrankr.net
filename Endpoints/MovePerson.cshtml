@@ -18,7 +18,6 @@
     if (team.OwnerId == WebSecurity.CurrentUserId) {
       var person = db.QuerySingle("SELECT * FROM Person WHERE ID=@0", personId);
       var oldIndex = person.OrderIndex;
-
       var sortDir = "ASC";
       if (index - oldIndex > 0) {
         //Moving down, so we need to modify IDs that occur before. Otherwise, we are moving up, so we need to shift IDs that occur afterwards
@@ -56,6 +55,14 @@
       } else {
         //Restore index input
         db.Execute("UPDATE Person SET RankingId=@0, OrderIndex=@1 WHERE Id=@2", rankingId, index, personId);
+      }
+
+      //Finally, normalize the ranking that you removed from
+      var originalPeople = db.Query("SELECT * FROM Person WHERE RankingId=@0 ORDER BY OrderIndex ASC", person.RankingId);
+      var count = 0; 
+      foreach (var op in originalPeople) {
+        db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", count, op.Id);
+        count++;
       }
       Response.SetStatus(200);
     } else {
