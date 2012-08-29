@@ -14,7 +14,8 @@
     //Check for ownership
     //TODO: Support multiple users of a single board
     if (team.OwnerId == WebSecurity.CurrentUserId) {
-      db.Execute("INSERT INTO Person (Description, RankingId) VALUES (@0, @1)", personDescription, rankingId);
+      var insertIndex = db.Query("SELECT * FROM Person WHERE RankingId = @0", rankingId).Count();
+      db.Execute("INSERT INTO Person (Description, RankingId, OrderIndex) VALUES (@0, @1, @2)", personDescription, rankingId, insertIndex);
       Response.Write(db.GetLastInsertId());
     } else {
       Response.SetStatus(401);

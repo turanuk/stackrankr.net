@@ -14,6 +14,19 @@
     //Check for ownership
     //TODO: Support multiple users of a single board
     if (team.OwnerId == WebSecurity.CurrentUserId) {
+      var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", person.RankingId);
+      var pastIndex = false;
+      foreach (var p in people) {
+        var currentIndex = p.OrderIndex;
+        //This is the entry we have to remove
+        if (currentIndex == person.OrderIndex) {
+          pastIndex = true;
+        }
+        if (pastIndex) {
+          var newIndex = currentIndex - 1;
+          db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", newIndex, p.Id);
+        }
+      }
       db.Execute("DELETE FROM Person WHERE Id=@0", personId);
       Response.SetStatus(200);
     } else {

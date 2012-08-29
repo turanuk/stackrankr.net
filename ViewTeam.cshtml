@@ -75,7 +75,7 @@
                 $('.error').show();
               } else {
                 $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
-                  rankingContainer.append('<li class="person ui-state-default" data-personId="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc + '</span></a></li>')
+                  rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc + '</span></a></li>')
                 });
                 $(this).dialog('close');
               }
@@ -92,7 +92,7 @@
             newPersonDesc.keydown(function (e) {
               if (e.keyCode == 13) {
                 $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc.val() }, function (data) {
-                  rankingContainer.append('<li class="person ui-state-default" data-personId="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc.val() + '</span></a></li>')
+                  rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc.val() + '</span></a></li>')
                 });
                 thisDialog.dialog('close');
               }
@@ -108,7 +108,7 @@
         var personDescription = $(this).children('span').html();
         var personDescriptionDom = $(this).children('span');
         var personDom = $(this).parent('.person');
-        var personId = personDom.attr('data-personId');
+        var personId = personDom.attr('id');
         var rankingId = personDom.attr('data-rankingId');
         $("#editPersonDialog").dialog({
           modal: true,
@@ -192,7 +192,7 @@
         <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
         <ul class="peopleContainer">
           @{
-            var people = db.Query("SELECT * FROM Person WHERE RankingId = @0", ranking.Id);
+            var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", ranking.Id);
             foreach (var person in people) {
             <li class="person ui-state-default" id="@person.Id" data-rankingId="@ranking.Id">
               <a href="javascript: return false" class="modifyPerson"><span>@person.Description</span></a>

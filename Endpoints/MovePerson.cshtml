@@ -16,9 +16,47 @@
     //Check for ownership
     //TODO: Support multiple users of a single board
     if (team.OwnerId == WebSecurity.CurrentUserId) {
-      db.Execute("UPDATE Person SET RankingId=@0  WHERE Id=@1", rankingId, personId);
-      //Now need to update the order within the rankings to preserve the correct order on re-rendering
+      var person = db.QuerySingle("SELECT * FROM Person WHERE ID=@0", personId);
+      var oldIndex = person.OrderIndex;
 
+      var sortDir = "ASC";
+      if (index - oldIndex > 0) {
+        //Moving down, so we need to modify IDs that occur before. Otherwise, we are moving up, so we need to shift IDs that occur afterwards
+        sortDir = "DESC";
+      }
+      //Temporarily set the index to -1 so the new entry can be ordered correctly
+      db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", -1, personId);
+      //Now need to update the order within the rankings to preserve the correct order on re-rendering
+      var people = db.Query("SELECT * FROM Person WHERE RankingId=@0 ORDER BY OrderIndex " + sortDir, rankingId);
+
+      //Lay out all the ranking Ids
+      var pastIndex = false;
+      var counter = 0;
+      foreach (var p in people) {
+        var currentOrderIndex = p.OrderIndex;
+        //If you match the index, you need to start shifting up from beyond this point.
+        if (currentOrderIndex == index) {
+          pastIndex = true;
+        }
+        //Shift up the Id if past the index of insertion
+        if (pastIndex) {
+          var newIndex = 0;
+          if (sortDir == "ASC") {
+            newIndex = currentOrderIndex + 1;
+          } else {
+            newIndex = currentOrderIndex - 1;
+          }
+          db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", newIndex, p.Id);
+        }
+        counter++;
+      }
+      //This needs to be inserted at the end, update index appropriately
+      if (!pastIndex) {
+        db.Execute("UPDATE Person SET RankingId=@0, OrderIndex=@1 WHERE Id=@2", rankingId, counter, personId);
+      } else {
+        //Restore index input
+        db.Execute("UPDATE Person SET RankingId=@0, OrderIndex=@1 WHERE Id=@2", rankingId, index, personId);
+      }
       Response.SetStatus(200);
     } else {
       Response.SetStatus(401);

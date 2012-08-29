@@ -1,4 +1,6 @@
 ﻿@{
   var db = Database.Open("stackRankR");
+  db.Execute("DELETE FROM Person");
+  db.Execute("DELETE FROM Ranking");
   db.Execute("DELETE FROM Team");
 }
