@@ -31,21 +31,24 @@
         var rankingText = $(this).html();
         var rankingId = $(this).attr('data-rankingId');
         var rankingTitleElement = $(this);
+        var executeRankingTitleUpdate = function (dialogRef) {
+          var newRankingText = $('#newRankingName').val();
+          if (newRankingText === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/updateranking', { RankingId: rankingId, RankingText: newRankingText }, function () {
+              rankingTitleElement.html(newRankingText);
+            });
+            dialogRef.dialog('close');
+          }
+        }
         $("#rankingDialog").dialog({
           modal: true,
           draggable: false,
           resizable: false,
           buttons: {
             "Update": function () {
-              var newRankingText = $('#newRankingName').val();
-              if (newRankingText === '') {
-                $('.error').show();
-              } else {
-                $.post('/endpoints/updateranking', { RankingId: rankingId, RankingText: newRankingText }, function () {
-                  rankingTitleElement.html(newRankingText);
-                });
-                $(this).dialog('close');
-              }
+              executeRankingTitleUpdate($(this));
             },
             "Cancel": function () {
               $(this).dialog('close');
@@ -58,10 +61,7 @@
             newRankingName.select();
             newRankingName.keydown(function (e) {
               if (e.keyCode == 13) {
-                $.post('/endpoints/updateranking', { RankingId: rankingId, RankingText: newRankingName.val() }, function () {
-                  rankingTitleElement.html(newRankingName.val());
-                });
-                thisDialog.dialog('close');
+                executeRankingTitleUpdate(thisDialog);
               }
             });
           },
@@ -74,21 +74,24 @@
       $('.addPerson').click(function () {
         var rankingId = $(this).attr('data-rankingId');
         var rankingContainer = $(this).prev('.peopleContainer');
+        var executeAddPerson = function (dialogRef) {
+          var newPersonDesc = $('#newPersonDesc').val();
+          if (newPersonDesc === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
+              rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc + '</span></a></li>')
+            });
+            dialogRef.dialog('close');
+          }
+        }
         $("#personDialog").dialog({
           modal: true,
           draggable: false,
           resizable: false,
           buttons: {
             "Insert": function () {
-              var newPersonDesc = $('#newPersonDesc').val();
-              if (newPersonDesc === '') {
-                $('.error').show();
-              } else {
-                $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
-                  rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc + '</span></a></li>')
-                });
-                $(this).dialog('close');
-              }
+              executeAddPerson($(this));
             },
             "Cancel": function () {
               $(this).dialog('close');
@@ -101,10 +104,7 @@
             newPersonDesc.focus();
             newPersonDesc.keydown(function (e) {
               if (e.keyCode == 13) {
-                $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc.val() }, function (data) {
-                  rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc.val() + '</span></a></li>')
-                });
-                thisDialog.dialog('close');
+                executeAddPerson(thisDialog);
               }
             });
           },
@@ -120,21 +120,24 @@
         var personDom = $(this).parent('.person');
         var personId = personDom.attr('id');
         var rankingId = personDom.attr('data-rankingId');
+        var executePersonUpdate = function (dialogRef) {
+          var editPersonDesc = $('#editedPersonDesc').val();
+          if (editPersonDesc === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/updatePerson', { PersonId: personId, RankingId: rankingId, PersonDescription: editPersonDesc }, function () {
+              personDescriptionDom.html(editPersonDesc);
+            });
+            dialogRef.dialog('close');
+          }
+        }
         $("#editPersonDialog").dialog({
           modal: true,
           draggable: false,
           resizable: false,
           buttons: {
             "Update": function () {
-              var editPersonDesc = $('#editedPersonDesc').val();
-              if (editPersonDesc === '') {
-                $('.error').show();
-              } else {
-                $.post('/endpoints/updatePerson', { PersonId: personId, RankingId: rankingId, PersonDescription: editPersonDesc }, function () {
-                  personDescriptionDom.html(editPersonDesc);
-                });
-                $(this).dialog('close');
-              }
+              executePersonUpdate($(this));
             },
             "Cancel": function () {
               $(this).dialog('close');
@@ -147,10 +150,7 @@
             editPersonDesc.select();
             editPersonDesc.keydown(function (e) {
               if (e.keyCode == 13) {
-                $.post('/endpoints/updatePerson', { PersonId: personId, RankingId: rankingId, PersonDescription: editPersonDesc.val() }, function () {
-                  personDescriptionDom.html(editPersonDesc.val());
-                });
-                thisDialog.dialog('close');
+                executePersonUpdate(thisDialog);
               }
             });
             $('#deletePerson').click(function () {

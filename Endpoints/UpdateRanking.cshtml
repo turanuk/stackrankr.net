@@ -12,7 +12,7 @@
     var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", ranking.TeamId);
 
     //Check for ownership or shared rights
-    if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", Team.Id, WebSecurity.CurrentUserId) != null) {
+    if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", team.Id, WebSecurity.CurrentUserId) != null) {
       db.Execute("UPDATE Ranking SET Name=@0 WHERE Id = @1", newRankingText, rankingId);
       Response.SetStatus(200);
     } else {
