@@ -19,8 +19,21 @@
 
   var rankings = db.Query("SELECT * FROM Ranking WHERE TeamId = @0", teamId);
 }
-
-<h1>@team.Name</h1>
+<div class="topNav">
+  <a href="~/Teams">Back to Teams</a>
+</div>
+<div class="topBar">
+  <h1>@team.Name</h1>
+  <div class="users">
+    SHARED WITH
+    <span class="avatars">
+      @foreach (var u in db.Query("SELECT UserId FROM TeamAccess WHERE TeamId=@0", teamId)) {
+        var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
+        <img src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email"/>
+      }
+    </span>
+  </div>
+</div>
 
 @section Scripts {
   <script>
@@ -48,7 +61,7 @@
             "Update": function () {
               executeRankingTitleUpdate($(this));
             },
-            "Cancel": function () {
+            "Close": function () {
               $(this).dialog('close');
             }
           },

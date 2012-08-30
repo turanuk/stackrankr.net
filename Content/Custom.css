@@ -138,6 +138,30 @@ a {
 }
 
 /* Team View */
+.topNav {
+  margin-top: 7px;
+}
+
+.topBar {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+  .topBar h1 {
+    margin-left: 20px;
+  }
+
+.users {
+  position: absolute;
+  top: 0px;
+  right: 30px;
+  font-weight: bold;
+}
+
+.avatars {
+  margin-left: 3px;
+}
+
 .avatar {
   margin-top: 20px;
 }
