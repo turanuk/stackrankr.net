@@ -12,7 +12,9 @@
     }
     Response.Redirect("~/ViewTeam/" + teamId);
   }
+
   var teamQuery = db.Query("SELECT Name, Id, Display FROM Team WHERE OwnerId = @0", WebSecurity.CurrentUserId);
+  var sharedTeamQuery = db.Query("SELECT TeamId FROM TeamAccess WHERE UserId = @0", WebSecurity.CurrentUserId);
 }
 
 @section Scripts {
@@ -47,6 +49,63 @@
         $('.error').hide();
       });
 
+      $('.shareButton').click(function (e) {
+        e.preventDefault();
+        var teamId = $(this).attr('data-teamId');
+        $("#shareTeamDialog").dialog({
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons: {
+            "Share": function () {
+              $('#errMsg').html('');
+              var username = $('#usernameInput').val();
+              if (username === '') {
+                $('.error').show();
+              } else {
+                $.post('/endpoints/shareteam', { TeamId: teamId, Username: username }, function () {
+                  $('#errMsg').html('Added ' + username + '.');
+                  $('#usernameInput').val('');
+                  $('#usernameInput').focus();
+                }).error(function () {
+                  $('#errMsg').html('Username ' + username + ' doesn\'t exist or already has access!');
+                  $('#usernameInput').val('');
+                  $('#usernameInput').focus();
+                });
+              }
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            $('#usernameShare').select();
+            $('#errMsg').html('');
+            $('#usernameInput').keydown(function (e) {
+              $('#errMsg').html('');
+              username = $('#usernameInput').val();
+              if (e.keyCode === 13) {
+                $('#errMsg').html('');
+                var username = $('#usernameInput').val();
+                if (username === '') {
+                  $('.error').show();
+                } else {
+                  $.post('/endpoints/shareteam', { TeamId: teamId, Username: username }, function () {
+                    $('#errMsg').html('Added ' + username + '.');
+                    $('#usernameInput').val('');
+                    $('#usernameInput').focus();
+                  }).error(function () {
+                    $('#errMsg').html('Username ' + username + ' doesn\'t exist or already has access!');
+                    $('#usernameInput').val('');
+                    $('#usernameInput').focus();
+                  });
+                }
+              }
+            });
+          }
+        });
+      });
+
       $('.modifyButton').click(function (e) {
         e.preventDefault();
         var modifyButtonDom = $(this);
@@ -63,7 +122,8 @@
                 $('.error').show();
               } else {
                 $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
-                  modifyButtonDom.prev('.teamName').html(editTeamName);
+                  modifyButtonDom.siblings('.teamName').html(editTeamName);
+                  modifyButtonDom.attr('data-teamName', editTeamName);
                 });
                 $(this).dialog('close');
               }
@@ -79,11 +139,15 @@
             $('#editTeamName').keydown(function (e) {
               editTeamName = $('#editTeamName').val();
               if (e.keyCode === 13) {
-                $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
-                  modifyButtonDom.prev('.teamName').html(editTeamName);
-                  modifyButtonDom.attr('data-teamName', editTeamName);
-                });
-                thisDialog.dialog('close');
+                if (editTeamName === '') {
+                  $('.error').show();
+                } else {
+                  $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
+                    modifyButtonDom.siblings('.teamName').html(editTeamName);
+                    modifyButtonDom.attr('data-teamName', editTeamName);
+                  });
+                  thisDialog.dialog('close');
+                }
               }
             });
             $('#deleteTeam').click(function () {
@@ -119,7 +183,7 @@
 
 <div class="contentContainer">
   <img alt="avatar" src="@Gravatar.GetUrl(WebSecurity.CurrentUserName, 120)" class="avatar">
-  @if (teamQuery.Count() == 0) {
+  @if (teamQuery.Count() == 0 && sharedTeamQuery.Count() == 0) {
     <p>You have no teams!</p>
     <div class="medSpacer"></div>
   } else {
@@ -129,7 +193,19 @@
           <li class="team">
             <a href="~/ViewTeam/@team.Id" class="teamName">
               <span class="teamName">@team.Name</span>
+              <span class="shareButton" data-teamId="@team.Id"></span>
               <span class="modifyButton" data-teamId="@team.Id" data-teamName="@team.Name"></span>
+            </a>
+          </li>
+        }
+      }
+      @foreach (var teamId in sharedTeamQuery) {
+        var sharedTeam = db.QuerySingle("SELECT * FROM Team WHERE Id=@0", teamId.TeamId);
+        if (sharedTeam.Display == true) {
+          <li class="team">
+            <a href="~/ViewTeam/@sharedTeam.Id" class="teamName">
+              <span class="teamName">@sharedTeam.Name</span>
+              <span class="modifyButton" data-teamId="@sharedTeam.Id" data-teamName="@sharedTeam.Name"></span>
             </a>
           </li>
         }
@@ -153,5 +229,12 @@
   <p>Or click below to delete the team:</p>
   <div class="medSpacer"></div>
   <a id="deleteTeam" href="javascript:return false;" class="linkButton deleteButton">Delete Team</a>
+  <div class="largeSpacer"></div>
+</div>
+
+<div id="shareTeamDialog" class="dialogContainer" title="Share Team">
+  <p>Enter a username to share this team with:</p>
+  <input id="usernameInput" type="text" class="dialogInput"/><span class="error">*</span>
+  <div id="errMsg"></div>
   <div class="largeSpacer"></div>
 </div>

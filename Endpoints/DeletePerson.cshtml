@@ -11,9 +11,8 @@
     var ranking = db.QuerySingle("SELECT * FROM Ranking WHERE Id = @0", person.RankingId);
     var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", ranking.TeamId);
 
-    //Check for ownership
-    //TODO: Support multiple users of a single board
-    if (team.OwnerId == WebSecurity.CurrentUserId) {
+    //Check for ownership or shared rights
+    if (team.OwnerId == WebSecurity.CurrentUserId || db.QuerySingle("SELECT * FROM TeamAccess WHERE TeamId=@0 AND UserId=@1", team.Id, WebSecurity.CurrentUserId) != null) {
       var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", person.RankingId);
       var pastIndex = false;
       foreach (var p in people) {
