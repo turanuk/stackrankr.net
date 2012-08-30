@@ -52,27 +52,30 @@
       $('.shareButton').click(function (e) {
         e.preventDefault();
         var teamId = $(this).attr('data-teamId');
+        var runShareUpdate = function () {
+          $('#errMsg').html('');
+          var username = $('#usernameInput').val();
+          if (username === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/shareteam', { TeamId: teamId, Username: username }, function () {
+              $('#errMsg').html('Added ' + username + '.');
+              $('#usernameInput').val('');
+              $('#usernameInput').focus();
+            }).error(function () {
+              $('#errMsg').html('Username ' + username + ' doesn\'t exist or already has access!');
+              $('#usernameInput').val('');
+              $('#usernameInput').focus();
+            });
+          }
+        }
         $("#shareTeamDialog").dialog({
           modal: true,
           draggable: false,
           resizable: false,
           buttons: {
             "Share": function () {
-              $('#errMsg').html('');
-              var username = $('#usernameInput').val();
-              if (username === '') {
-                $('.error').show();
-              } else {
-                $.post('/endpoints/shareteam', { TeamId: teamId, Username: username }, function () {
-                  $('#errMsg').html('Added ' + username + '.');
-                  $('#usernameInput').val('');
-                  $('#usernameInput').focus();
-                }).error(function () {
-                  $('#errMsg').html('Username ' + username + ' doesn\'t exist or already has access!');
-                  $('#usernameInput').val('');
-                  $('#usernameInput').focus();
-                });
-              }
+              runShareUpdate();
             },
             "Cancel": function () {
               $(this).dialog('close');
@@ -82,24 +85,8 @@
             $('#usernameShare').select();
             $('#errMsg').html('');
             $('#usernameInput').keydown(function (e) {
-              $('#errMsg').html('');
-              username = $('#usernameInput').val();
               if (e.keyCode === 13) {
-                $('#errMsg').html('');
-                var username = $('#usernameInput').val();
-                if (username === '') {
-                  $('.error').show();
-                } else {
-                  $.post('/endpoints/shareteam', { TeamId: teamId, Username: username }, function () {
-                    $('#errMsg').html('Added ' + username + '.');
-                    $('#usernameInput').val('');
-                    $('#usernameInput').focus();
-                  }).error(function () {
-                    $('#errMsg').html('Username ' + username + ' doesn\'t exist or already has access!');
-                    $('#usernameInput').val('');
-                    $('#usernameInput').focus();
-                  });
-                }
+                runShareUpdate();
               }
             });
           }
