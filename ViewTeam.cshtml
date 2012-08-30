@@ -8,8 +8,6 @@
     Response.Redirect("~/Error");
   }
   var db = Database.Open("stackRankR");
-
-  //TODO: Update for new multi-viewer design
   var team = db.QuerySingle("SELECT * FROM Team WHERE Id = @0", teamId);
   if (team == null) {
     Response.Redirect("~/Error");
