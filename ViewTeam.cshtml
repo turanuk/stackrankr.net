@@ -18,26 +18,68 @@
   }
 
   var rankings = db.Query("SELECT * FROM Ranking WHERE TeamId = @0", teamId);
+  var sharedUsers = db.Query("SELECT UserId FROM TeamAccess WHERE TeamId=@0", teamId);
 }
 <div class="topNav">
   <a href="~/Teams">Back to Teams</a>
 </div>
 <div class="topBar">
   <h1>@team.Name</h1>
+  <input type="hidden" id="teamId" value="@teamId"/>
   <div class="users">
-    SHARED WITH
+    @if (sharedUsers.Count() > 0) {
+      <text>SHARED WITH</text>
+    }
     <span class="avatars">
-      @foreach (var u in db.Query("SELECT UserId FROM TeamAccess WHERE TeamId=@0", teamId)) {
+      @foreach (var u in sharedUsers) {
         var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
-        <img src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email"/>
+        <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email"/>
       }
     </span>
   </div>
 </div>
 
+@if (team.OwnerId == WebSecurity.CurrentUserId) {
+        <text>
+        
+        </text>
+      }
+
 @section Scripts {
   <script>
     $(function () {
+      $('.shareAvatar').click(function () {
+        var shareAvatar = $(this);
+        var username = shareAvatar.attr('title');
+        var imgSrc = shareAvatar.attr('src');
+        $("#unshareDialog").dialog({
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons: {
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            var thisDialog = $(this);
+            $('#unshareButton').click(function () {
+              if ($(this).html() === 'Sure?') {
+                $.post('/endpoints/unshareteam', { Username: username, TeamId: $('#teamId').val() }, function () {
+                  shareAvatar.remove();
+                  thisDialog.dialog('close');
+                });
+              } else {
+                $(this).html('Sure?');
+              }
+            });
+          },
+          close: function () {
+            $('#unshareButton').html('Stop');
+            $('#unshareButton').unbind('click');
+          }
+        });
+      });
       $('.rankingTitle').click(function () {
         var rankingText = $(this).html();
         var rankingId = $(this).attr('data-rankingId');
@@ -61,7 +103,7 @@
             "Update": function () {
               executeRankingTitleUpdate($(this));
             },
-            "Close": function () {
+            "Cancel": function () {
               $(this).dialog('close');
             }
           },
@@ -243,5 +285,12 @@
   <p>Or click below to delete the person:</p>
   <div class="medSpacer"></div>
   <a id="deletePerson" href="javascript:return false;" class="linkButton deleteButton">Delete Person</a>
+  <div class="largeSpacer"></div>
+</div>
+
+<div id="unshareDialog" class="dialogContainer" title="Unshare">
+  <p>Stop sharing?</p>
+  <div class="imgHolder"></div>
+  <a id="unshareButton" href="javascript:return false;" class="linkButton deleteButton">Stop</a>
   <div class="largeSpacer"></div>
 </div>
