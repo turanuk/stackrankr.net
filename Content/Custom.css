@@ -22,6 +22,14 @@ a {
   font-size: 0.95em;
 }
 
+.actionHeader {
+  height: 25px;
+}
+
+#newRankingButton {
+  margin-left: 20px;
+}
+
   .linkButton:hover, .linkButton:focus {
     outline: none;
     text-decoration: none;

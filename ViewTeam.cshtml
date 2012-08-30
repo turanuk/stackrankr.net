@@ -40,6 +40,9 @@
     </div>
   }
 </div>
+<div class="actionHeader">
+  <a id="newRankingButton" href="javascript:return false;" class="linkButton">New Ranking</a>
+</div>
 
 @section Scripts {
   <script>
@@ -48,7 +51,7 @@
         var shareAvatar = $(this);
         var username = shareAvatar.attr('title');
         var imgSrc = shareAvatar.attr('src');
-        $('#imgHolder').html('<img src="' + imgSrc.substr(0, imgSrc.length-2) + '75" alt="gravatar" title="' + username + '"/>');
+        $('#imgHolder').html('<img src="' + imgSrc.substr(0, imgSrc.length - 2) + '75" alt="gravatar" title="' + username + '"/>');
         $("#unshareDialog").dialog({
           modal: true,
           draggable: false,
@@ -92,11 +95,13 @@
             dialogRef.dialog('close');
           }
         }
-        $("#rankingDialog").dialog({
+        $("#rankingDialog").dialog(
+        {
           modal: true,
           draggable: false,
           resizable: false,
-          buttons: {
+          buttons:
+          {
             "Update": function () {
               executeRankingTitleUpdate($(this));
             },
@@ -225,20 +230,20 @@
       });
 
       $('.peopleContainer').sortable(
-      {
-        connectWith: '.peopleContainer',
-        placeholder: 'ui-state-highlight',
-        helper: 'clone',
-        forcePlaceholderSize: true,
-        stop: function (event, ui) {
-          var ranking = $(ui.item).parents('.ranking');
-          var personId = ui.item.attr('id');
-          var rankingId = ranking.attr('data-rankingId');
-          var sortableArray = $(ui.item).parent().sortable('toArray');
-          var index = sortableArray.indexOf(personId);
-          $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
-        }
-      });
+        {
+          connectWith: '.peopleContainer',
+          placeholder: 'ui-state-highlight',
+          helper: 'clone',
+          forcePlaceholderSize: true,
+          stop: function (event, ui) {
+            var ranking = $(ui.item).parents('.ranking');
+            var personId = ui.item.attr('id');
+            var rankingId = ranking.attr('data-rankingId');
+            var sortableArray = $(ui.item).parent().sortable('toArray');
+            var index = sortableArray.indexOf(personId);
+            $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
+          }
+        });
     });
   </script>
 }
