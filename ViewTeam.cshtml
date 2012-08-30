@@ -48,6 +48,7 @@
         var shareAvatar = $(this);
         var username = shareAvatar.attr('title');
         var imgSrc = shareAvatar.attr('src');
+        $('#imgHolder').html('<img src="' + imgSrc.substr(0, imgSrc.length-2) + '75" alt="gravatar" title="' + username + '"/>');
         $("#unshareDialog").dialog({
           modal: true,
           draggable: false,
@@ -286,7 +287,9 @@
 
 <div id="unshareDialog" class="dialogContainer" title="Unshare">
   <p>Stop sharing?</p>
-  <div class="imgHolder"></div>
+  <div class="mediumSpacer"></div>
+  <div id="imgHolder"></div>
+  <div class="largeSpacer"></div>
   <a id="unshareButton" href="javascript:return false;" class="linkButton deleteButton">Stop</a>
   <div class="largeSpacer"></div>
 </div>
