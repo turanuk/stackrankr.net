@@ -98,22 +98,25 @@
         var modifyButtonDom = $(this);
         var teamId = modifyButtonDom.attr('data-teamId');
         var teamName = modifyButtonDom.attr('data-teamName');
+        var executeModifyUpdate = function (dialogRef) {
+          var editTeamName = $('#editTeamName').val();
+          if (editTeamName === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
+              modifyButtonDom.siblings('.teamName').html(editTeamName);
+              modifyButtonDom.attr('data-teamName', editTeamName);
+            });
+            dialogRef.dialog('close');
+          }
+        }
         $("#editTeamDialog").dialog({
           modal: true,
           draggable: false,
           resizable: false,
           buttons: {
             "Update": function () {
-              var editTeamName = $('#editTeamName').val();
-              if (editTeamName === '') {
-                $('.error').show();
-              } else {
-                $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
-                  modifyButtonDom.siblings('.teamName').html(editTeamName);
-                  modifyButtonDom.attr('data-teamName', editTeamName);
-                });
-                $(this).dialog('close');
-              }
+              executeModifyUpdate($(this));
             },
             "Cancel": function () {
               $(this).dialog('close');
@@ -124,17 +127,8 @@
             $('#editTeamName').val(modifyButtonDom.attr('data-teamName'));
             $('#editTeamName').select();
             $('#editTeamName').keydown(function (e) {
-              editTeamName = $('#editTeamName').val();
               if (e.keyCode === 13) {
-                if (editTeamName === '') {
-                  $('.error').show();
-                } else {
-                  $.post('/endpoints/updateteam', { TeamId: teamId, NewTeamName: editTeamName }, function (data) {
-                    modifyButtonDom.siblings('.teamName').html(editTeamName);
-                    modifyButtonDom.attr('data-teamName', editTeamName);
-                  });
-                  thisDialog.dialog('close');
-                }
+                executeModifyUpdate(thisDialog);
               }
             });
             $('#deleteTeam').click(function () {
