@@ -7,7 +7,9 @@
   if (IsPost) {
     db.Execute("INSERT INTO Team (Name, OwnerId, Display) VALUES (@0, @1, @2)", Request["newTeamName"], WebSecurity.CurrentUserId, true);
     var teamId = db.GetLastInsertId();
-    for (int i = 1; i <= 3; i++) {
+    //Create the initial Rankings
+    var numOfRankings = 3;
+    for (int i = 1; i <= numOfRankings; i++) {
       db.Execute("INSERT INTO Ranking (Name, TeamId) VALUES (@0, @1)", i, teamId);
     }
     Response.Redirect("~/ViewTeam/" + teamId);
