@@ -26,24 +26,20 @@
 <div class="topBar">
   <h1>@team.Name</h1>
   <input type="hidden" id="teamId" value="@teamId"/>
-  <div class="users">
-    @if (sharedUsers.Count() > 0) {
-      <text>SHARED WITH</text>
-    }
-    <span class="avatars">
-      @foreach (var u in sharedUsers) {
-        var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
-        <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email"/>
+  @if (team.OwnerId == WebSecurity.CurrentUserId) {
+    <div class="users">
+      @if (sharedUsers.Count() > 0) {
+        <text>SHARED WITH</text>
       }
-    </span>
-  </div>
+      <span class="avatars">
+        @foreach (var u in sharedUsers) {
+          var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
+          <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email"/>
+        }
+      </span>
+    </div>
+  }
 </div>
-
-@if (team.OwnerId == WebSecurity.CurrentUserId) {
-        <text>
-        
-        </text>
-      }
 
 @section Scripts {
   <script>
