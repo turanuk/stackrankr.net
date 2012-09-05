@@ -47,6 +47,64 @@
 @section Scripts {
   <script>
     $(function () {
+      var makeSortable = function () {
+        $('.peopleContainer').sortable({
+          connectWith: '.peopleContainer',
+          placeholder: 'ui-state-highlight',
+          helper: 'clone',
+          forcePlaceholderSize: true,
+          stop: function (event, ui) {
+            var ranking = $(ui.item).parents('.ranking');
+            var personId = ui.item.attr('id');
+            var rankingId = ranking.attr('data-rankingId');
+            var sortableArray = $(ui.item).parent().sortable('toArray');
+            var index = sortableArray.indexOf(personId);
+            $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
+          }
+        });
+      }
+      $('#newRankingButton').click(function () {
+        var executeRankingInsertion = function (dialogRef) {
+          var rankingText = $('#rankingName').val();
+          if (rankingText === '') {
+            $('.error').show();
+          } else {
+            $.post('/endpoints/addranking', { TeamId: $('#teamId').val(), RankingText: rankingText }, function (data) {
+              $('.rankingContainer').append('<div class="ranking" data-rankingId="' + data + '"><a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="' + data + '">' + rankingText + '</h3></a><ul class="peopleContainer"></ul><a href="javascript: return false;" data-rankingId="' + data + '" class="addPerson">Add a person</a>');
+              makeSortable();
+            });
+            dialogRef.dialog('close');
+          }
+        }
+        $("#newRankingDialog").dialog(
+        {
+          modal: true,
+          draggable: false,
+          resizable: false,
+          buttons:
+          {
+            "Update": function () {
+              executeRankingInsertion($(this));
+            },
+            "Cancel": function () {
+              $(this).dialog('close');
+            }
+          },
+          open: function () {
+            var thisDialog = $(this);
+            var rankingName = $('#rankingName');
+            rankingName.select();
+            rankingName.keydown(function (e) {
+              if (e.keyCode == 13) {
+                executeRankingInsertion(thisDialog);
+              }
+            });
+          },
+          close: function () {
+            $('#rankingName').unbind('keydown');
+          }
+        });
+      });
       $('.shareAvatar').click(function () {
         var shareAvatar = $(this);
         var username = shareAvatar.attr('title');
@@ -80,10 +138,11 @@
           }
         });
       });
-      $('.rankingTitle').click(function () {
+      $('.rankingTitle').live('click', function () {
         var rankingText = $(this).html();
         var rankingId = $(this).attr('data-rankingId');
         var rankingTitleElement = $(this);
+        var rankingDom = $(this).parents('.ranking');
         var executeRankingTitleUpdate = function (dialogRef) {
           var newRankingText = $('#newRankingName').val();
           if (newRankingText === '') {
@@ -119,14 +178,28 @@
                 executeRankingTitleUpdate(thisDialog);
               }
             });
+            $('#deleteRanking').click(function () {
+              if ($(this).html() === 'Sure?') {
+                $.post('/endpoints/deleteRanking', { RankingId: rankingId }, function () {
+                  rankingDom.fadeOut(100, function () {
+                    $(this).remove();
+                  });
+                  thisDialog.dialog('close');
+                });
+              } else {
+                $(this).html('Sure?');
+              }
+            });
           },
           close: function () {
             $('#newRankingName').unbind('keydown');
+            $('#deleteRanking').html('Delete');
+            $('#deleteRanking').unbind('click');
           }
         });
       });
 
-      $('.addPerson').click(function () {
+      $('.addPerson').live('click', function () {
         var rankingId = $(this).attr('data-rankingId');
         var rankingContainer = $(this).prev('.peopleContainer');
         var executeAddPerson = function (dialogRef) {
@@ -229,21 +302,7 @@
         });
       });
 
-      $('.peopleContainer').sortable(
-        {
-          connectWith: '.peopleContainer',
-          placeholder: 'ui-state-highlight',
-          helper: 'clone',
-          forcePlaceholderSize: true,
-          stop: function (event, ui) {
-            var ranking = $(ui.item).parents('.ranking');
-            var personId = ui.item.attr('id');
-            var rankingId = ranking.attr('data-rankingId');
-            var sortableArray = $(ui.item).parent().sortable('toArray');
-            var index = sortableArray.indexOf(personId);
-            $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
-          }
-        });
+      makeSortable();
     });
   </script>
 }
@@ -274,6 +333,15 @@
 <div id="rankingDialog" class="dialogContainer" title="Ranking Name">
   <p>Enter the new name for this ranking:</p>
   <input id="newRankingName" type="text" class="dialogInput"/><span class="error">*</span>
+  <p>Or click below to delete the ranking:</p>
+  <div class="medSpacer"></div>
+  <a id="deleteRanking" href="javascript:return false;" class="linkButton deleteButton">Delete Ranking</a>
+  <div class="largeSpacer"></div>
+</div>
+
+<div id="newRankingDialog" class="dialogContainer" title="Add a Ranking">
+  <p>Enter the name for this ranking:</p>
+  <input id="rankingName" type="text" class="dialogInput"/><span class="error">*</span>
 </div>
 
 <div id="personDialog" class="dialogContainer" title="Add a Person">
