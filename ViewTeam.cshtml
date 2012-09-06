@@ -52,6 +52,7 @@
           connectWith: '.peopleContainer',
           placeholder: 'ui-state-highlight',
           helper: 'clone',
+          scroll: true,
           forcePlaceholderSize: true,
           stop: function (event, ui) {
             var ranking = $(ui.item).parents('.ranking');
@@ -62,7 +63,7 @@
             $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
           }
         });
-      }
+        }
       $('#newRankingButton').click(function () {
         var executeRankingInsertion = function (dialogRef) {
           var rankingText = $('#rankingName').val();
@@ -303,30 +304,32 @@
       });
 
       makeSortable();
-    });
+     });
   </script>
 }
 
 @if (rankings.Count() == 0) {
   <h2>No rankings yet!</h2>
 } else {
-  <div class="rankingContainer">
-    @foreach (var ranking in rankings) {
-      <div class="ranking" data-rankingId="@ranking.Id">
-        <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
-        <ul class="peopleContainer">
-          @{
-            var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", ranking.Id);
-            foreach (var person in people) {
-            <li class="person ui-state-default" id="@person.Id" data-rankingId="@ranking.Id">
-              <a href="javascript: return false" class="modifyPerson"><span>@person.Description</span></a>
-            </li>
+  <div class="rankingContainerWrapper">
+    <div class="rankingContainer">
+      @foreach (var ranking in rankings) {
+        <div class="ranking" data-rankingId="@ranking.Id">
+          <a href="javascript: return false;"><h3 class="rankingTitle" data-rankingId="@ranking.Id">@ranking.Name</h3></a>
+          <ul class="peopleContainer">
+            @{
+              var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", ranking.Id);
+              foreach (var person in people) {
+              <li class="person ui-state-default" id="@person.Id" data-rankingId="@ranking.Id">
+                <a href="javascript: return false" class="modifyPerson"><span>@person.Description</span></a>
+              </li>
+              }
             }
-          }
-        </ul>
-        <a href="javascript: return false;" data-rankingId="@ranking.Id" class="addPerson">Add a person</a>
-      </div>
-    }
+          </ul>
+          <a href="javascript: return false;" data-rankingId="@ranking.Id" class="addPerson">Add a person</a>
+        </div>
+      }
+    </div>
   </div>
 }
 
