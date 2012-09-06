@@ -1,3 +1,2 @@
 [config]
-command = sleep 300
-command2 = echo "woke up"
+command = deployment.bat
