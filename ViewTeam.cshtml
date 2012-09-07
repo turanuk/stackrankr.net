@@ -34,7 +34,7 @@
       <span class="avatars">
         @foreach (var u in sharedUsers) {
           var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
-          <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email"/>
+          <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email" data-userId="@u.UserId"/>
         }
       </span>
     </div>
@@ -63,7 +63,7 @@
             $.post('/endpoints/moveperson', { PersonId: personId, RankingId: rankingId, Index: index });
           }
         });
-        }
+      }
       $('#newRankingButton').click(function () {
         var executeRankingInsertion = function (dialogRef) {
           var rankingText = $('#rankingName').val();
@@ -264,6 +264,7 @@
           modal: true,
           draggable: false,
           resizable: false,
+          width: 400,
           buttons: {
             "Update": function () {
               executePersonUpdate($(this));
@@ -282,6 +283,62 @@
                 executePersonUpdate(thisDialog);
               }
             });
+            $('#assignPerson').click(function () {
+              thisDialog.dialog('close');
+              var avatars = $('.avatars');
+              $("#assignPersonDialog").dialog({
+                modal: true,
+                draggable: false,
+                resizable: false,
+                buttons: {
+                  "Close": function () {
+                    $(this).dialog('close');
+                  }
+                },
+                open: function () {
+                  var thisDialog = $('#assignPersonDialog');
+                  $('#memberContainer').html(avatars.html());
+                  $.getJSON('/endpoints/getassignedmembers', { PersonId: personId }, function (data) {
+                    var assignedHash = {};
+                    //Create hash table of values
+                    $.each(data, function (index, value) {
+                      assignedHash[value] = value;
+                    });
+                    $('#memberContainer').find('.shareAvatar').each(function (index) {
+                      var currentMember = $(this);
+                      var currentMemberId = currentMember.attr('data-userId');
+                      if (assignedHash[parseInt(currentMemberId)]) {
+                        currentMember.addClass('assigned');
+                      }
+                      currentMember.click(function () {
+                        if (currentMember.hasClass('assigned')) {
+                          $.post('/endpoints/unassignmemberfromperson', { PersonId: personId, UserId: currentMemberId }, function () {
+                            currentMember.removeClass('assigned');
+                            personDom.find('.assignedGravatarDisplay').each(function () {
+                              if ($(this).attr('data-userId') === currentMemberId) {
+                                $(this).remove();
+                              }
+                            });
+                          });
+                        } else {
+                          $.post('/endpoints/assignmembertoperson', { PersonId: personId, UserId: currentMemberId }, function () {
+                            currentMember.addClass('assigned');
+                            var assignedParent = personDom.find('.assignedPersonParent');
+                            //TODO: Add dynamic updates for assignment
+                            if (assignedParent.length == 0) {
+                            } else {
+                            }
+                          });
+                        }
+                      });
+                    });
+                  });
+                },
+                close: function () {
+                  $('#memberContainer').find('.shareAvatar').unbind('click');
+                }
+              });
+            });
             $('#deletePerson').click(function () {
               if ($(this).html() === 'Sure?') {
                 $.post('/endpoints/deleteperson', { PersonId: personId }, function () {
@@ -297,8 +354,9 @@
           },
           close: function () {
             $('#deletePerson').html('Delete');
-            $('#editedPersonDesc').unbind('keydown');
             $('#deletePerson').unbind('click');
+            $('#assignPerson').unbind('click');
+            $('#editedPersonDesc').unbind('keydown');
           }
         });
       });
@@ -322,6 +380,20 @@
               foreach (var person in people) {
               <li class="person ui-state-default" id="@person.Id" data-rankingId="@ranking.Id">
                 <a href="javascript: return false" class="modifyPerson"><span>@person.Description</span></a>
+                @{ 
+                  var assignedPersonQuery = db.Query("SELECT * FROM PersonAssign WHERE PersonId = @0", person.Id);
+                  if (assignedPersonQuery.Count > 0) {
+                    <div class="assignedPersonParent">
+                      @foreach (var ap in assignedPersonQuery)
+                      {
+                        var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId = @0", ap.UserId);
+                        <span class="assignedPersonDisplay">
+                          <img src="@Gravatar.GetUrl(user.Email, 20)" alt="gravatar" title="@user.Email" data-userId="@ap.UserId"/>
+                        </span>
+                      }
+                    </div>
+                  }
+                }
               </li>
               }
             }
@@ -354,11 +426,20 @@
 
 <div id="editPersonDialog" class="dialogContainer" title="Edit Person">
   <p>Enter the updated description for this person:</p>
-  <input id="editedPersonDesc" type="text" class="dialogInput"/><span class="error">*</span>
+  <input id="editedPersonDesc" type="text" class="dialogInput personInput"/><span class="error">*</span>
+  <p>Or click below to assign a team member:</p>
+  <div class="medSpacer"></div>
+  <a id="assignPerson" href="javascript: return false;" class="linkButton">Assign</a>
+  <div class="medSpacer"></div>
   <p>Or click below to delete the person:</p>
   <div class="medSpacer"></div>
   <a id="deletePerson" href="javascript:return false;" class="linkButton deleteButton">Delete Person</a>
   <div class="largeSpacer"></div>
+</div>
+
+<div id="assignPersonDialog" class="dialogContainer" title="Assign Members">
+  <p>Click to assign or unassign members</p>
+  <div id="memberContainer"></div>
 </div>
 
 <div id="unshareDialog" class="dialogContainer" title="Unshare">

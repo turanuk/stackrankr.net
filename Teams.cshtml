@@ -7,6 +7,8 @@
   if (IsPost) {
     db.Execute("INSERT INTO Team (Name, OwnerId, Display) VALUES (@0, @1, @2)", Request["newTeamName"], WebSecurity.CurrentUserId, true);
     var teamId = db.GetLastInsertId();
+    //Share with yourself
+    db.Execute("INSERT INTO TeamAccess (UserId, TeamId) VALUES (@0, @1)", WebSecurity.CurrentUserId, teamId);
     //Create the initial Rankings
     var numOfRankings = 3;
     for (int i = 1; i <= numOfRankings; i++) {
@@ -184,7 +186,7 @@
       }
       @foreach (var teamId in sharedTeamQuery) {
         var sharedTeam = db.QuerySingle("SELECT * FROM Team WHERE Id=@0", teamId.TeamId);
-        if (sharedTeam.Display == true) {
+        if (sharedTeam.Display == true && sharedTeam.OwnerId != WebSecurity.CurrentUserId) {
           <li class="team">
             <a href="~/ViewTeam/@sharedTeam.Id" class="teamName">
               <span class="teamName">@sharedTeam.Name</span>
