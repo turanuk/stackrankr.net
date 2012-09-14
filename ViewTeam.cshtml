@@ -26,19 +26,17 @@
 <div class="topBar">
   <h1>@team.Name</h1>
   <input type="hidden" id="teamId" value="@teamId"/>
-  @if (team.OwnerId == WebSecurity.CurrentUserId) {
-    <div class="users">
-      @if (sharedUsers.Count() > 0) {
-        <text>SHARED WITH</text>
+  <div class="users">
+    @if (sharedUsers.Count() > 0) {
+      <text>SHARED WITH</text>
+    }
+    <span class="avatars">
+      @foreach (var u in sharedUsers) {
+        var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
+        <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email" data-userId="@u.UserId"/>
       }
-      <span class="avatars">
-        @foreach (var u in sharedUsers) {
-          var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
-          <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email" data-userId="@u.UserId"/>
-        }
-      </span>
-    </div>
-  }
+    </span>
+  </div>
 </div>
 <div class="actionHeader">
   <a id="newRankingButton" href="javascript:return false;" class="linkButton">New Ranking</a>
