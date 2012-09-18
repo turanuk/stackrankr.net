@@ -37,7 +37,6 @@
       }
     </span>
   </div>
-  }
 </div>
 <div class="actionHeader">
   <a id="newRankingButton" href="javascript:return false;" class="linkButton">New Ranking</a>
@@ -328,9 +327,9 @@
                             var assignedParent = personDom.find('.assignedPersonParent');
                             //If there was never anybody assigned to this card, need to add wrapper element
                             if (assignedParent.length == 0) {
-                              personDom.find('.modifyPerson').append('<div class="assignedPersonParent"><span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span></div>');
+                              personDom.find('.modifyPerson').append('<div class="assignedPersonParent"><span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span></div>\n');
                             } else {
-                              personDom.find('.assignedPersonParent').append('<span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span>');
+                              personDom.find('.assignedPersonParent').append('<span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span>\n');
                             }
                           });
                         }
