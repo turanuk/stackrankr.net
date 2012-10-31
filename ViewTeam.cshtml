@@ -207,7 +207,7 @@
             $('.error').show();
           } else {
             $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
-              rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span>' + newPersonDesc + '</span></a></li>')
+              rankingContainer.append('<li class="person ui-state-default" id="' + data + ' data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span class="personDescription">' + newPersonDesc + '</span></a></li>')
             });
             dialogRef.dialog('close');
           }
@@ -229,11 +229,14 @@
             var newPersonDesc = $('#newPersonDesc');
             newPersonDesc.val('');
             newPersonDesc.focus();
+            //Enter submits
+            /*
             newPersonDesc.keydown(function (e) {
-              if (e.keyCode == 13) {
-                executeAddPerson(thisDialog);
-              }
+            if (e.keyCode == 13) {
+            executeAddPerson(thisDialog);
+            }
             });
+            */
           },
           close: function () {
             $('#newPersonDesc').unbind('keydown');
@@ -276,11 +279,13 @@
             editPersonDesc = $('#editedPersonDesc');
             editPersonDesc.val(personDescription);
             editPersonDesc.select();
+            /*
             editPersonDesc.keydown(function (e) {
-              if (e.keyCode == 13) {
-                executePersonUpdate(thisDialog);
-              }
+            if (e.keyCode == 13) {
+            executePersonUpdate(thisDialog);
+            }
             });
+            */
             $('#assignPerson').click(function () {
               thisDialog.dialog('close');
               var avatars = $('.avatars');
@@ -365,7 +370,7 @@
       });
 
       makeSortable();
-     });
+    });
   </script>
 }
 
@@ -426,12 +431,12 @@
 
 <div id="personDialog" class="dialogContainer" title="Add a Person">
   <p>Enter the description for this person:</p>
-  <input id="newPersonDesc" type="text" class="dialogInput"/><span class="error">*</span>
+  <textarea rows="5" id="newPersonDesc" class="dialogInput"></textarea><span class="error">*</span>
 </div>
 
 <div id="editPersonDialog" class="dialogContainer" title="Edit Person">
   <p>Enter the updated description for this person:</p>
-  <input id="editedPersonDesc" type="text" class="dialogInput personInput"/><span class="error">*</span>
+  <textarea rows="5" id="editedPersonDesc" class="dialogInput personInput"></textarea><span class="error">*</span>
   <p>Or click below to assign or unassign a team member:</p>
   <div class="medSpacer"></div>
   <a id="assignPerson" href="javascript: return false;" class="linkButton">Assign</a>

@@ -42,7 +42,8 @@ a {
 }
 
 .dialogInput {
-  width: 200px;
+  width: 250px;
+  overflow: auto;
 }
 
 .error {
