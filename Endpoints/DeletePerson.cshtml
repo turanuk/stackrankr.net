@@ -26,6 +26,7 @@
           db.Execute("UPDATE Person SET OrderIndex=@0 WHERE Id=@1", newIndex, p.Id);
         }
       }
+      db.Execute("DELETE FROM PersonAssign WHERE PersonId=@0", personId);
       db.Execute("DELETE FROM Person WHERE Id=@0", personId);
       Response.SetStatus(200);
     } else {
