@@ -26,19 +26,17 @@
 <div class="topBar">
   <h1>@team.Name</h1>
   <input type="hidden" id="teamId" value="@teamId"/>
-  @if (team.OwnerId == WebSecurity.CurrentUserId) {
-    <div class="users">
-      @if (sharedUsers.Count() > 0) {
-        <text>SHARED WITH</text>
+  <div class="users">
+    @if (sharedUsers.Count() > 0) {
+      <text>SHARED WITH</text>
+    }
+    <span class="avatars">
+      @foreach (var u in sharedUsers) {
+        var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
+        <img src="@Gravatar.GetUrl(user.Email, 25)" alt="gravatar" title="@user.Email" data-userId="@u.UserId"/>
       }
-      <span class="avatars">
-        @foreach (var u in sharedUsers) {
-          var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId=@0", u.UserId);
-          <img class="shareAvatar" src="@Gravatar.GetUrl(user.Email, 30)" alt="gravatar" title="@user.Email" data-userId="@u.UserId"/>
-        }
-      </span>
-    </div>
-  }
+    </span>
+  </div>
 </div>
 <div class="actionHeader">
   <a id="newRankingButton" href="javascript:return false;" class="linkButton">New Ranking</a>
@@ -304,7 +302,7 @@
                     $.each(data, function (index, value) {
                       assignedHash[value] = value;
                     });
-                    $('#memberContainer').find('.shareAvatar').each(function (index) {
+                    $('#memberContainer').find('img').each(function (index) {
                       var currentMember = $(this);
                       var currentMemberId = currentMember.attr('data-userId');
                       if (assignedHash[parseInt(currentMemberId)]) {
@@ -314,19 +312,24 @@
                         if (currentMember.hasClass('assigned')) {
                           $.post('/endpoints/unassignmemberfromperson', { PersonId: personId, UserId: currentMemberId }, function () {
                             currentMember.removeClass('assigned');
-                            personDom.find('.assignedGravatarDisplay').each(function () {
-                              if ($(this).attr('data-userId') === currentMemberId) {
-                                $(this).remove();
+                            personDom.find('.assignedPersonDisplay > img').each(function () {
+                              if ($(this).attr('data-userId') == currentMemberId) {
+                                $(this).parent().remove();
                               }
                             });
+                            if (personDom.find('.assignedPersonDisplay > img').length == 0) {
+                              personDom.find('.assignedPersonDisplay').remove();
+                            }
                           });
                         } else {
                           $.post('/endpoints/assignmembertoperson', { PersonId: personId, UserId: currentMemberId }, function () {
                             currentMember.addClass('assigned');
                             var assignedParent = personDom.find('.assignedPersonParent');
-                            //TODO: Add dynamic updates for assignment
+                            //If there was never anybody assigned to this card, need to add wrapper element
                             if (assignedParent.length == 0) {
+                              personDom.find('.modifyPerson').append('<div class="assignedPersonParent"><span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span></div>\n');
                             } else {
+                              personDom.find('.assignedPersonParent').append('<span class="assignedPersonDisplay">' + $('.avatars > img[data-userId="' + currentMemberId + '"]').clone().wrap('<p>').parent().html() + '</span>\n');
                             }
                           });
                         }
@@ -379,21 +382,23 @@
               var people = db.Query("SELECT * FROM Person WHERE RankingId = @0 ORDER BY OrderIndex", ranking.Id);
               foreach (var person in people) {
               <li class="person ui-state-default" id="@person.Id" data-rankingId="@ranking.Id">
-                <a href="javascript: return false" class="modifyPerson"><span>@person.Description</span></a>
-                @{ 
-                  var assignedPersonQuery = db.Query("SELECT * FROM PersonAssign WHERE PersonId = @0", person.Id);
-                  if (assignedPersonQuery.Count > 0) {
-                    <div class="assignedPersonParent">
-                      @foreach (var ap in assignedPersonQuery)
-                      {
-                        var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId = @0", ap.UserId);
-                        <span class="assignedPersonDisplay">
-                          <img src="@Gravatar.GetUrl(user.Email, 20)" alt="gravatar" title="@user.Email" data-userId="@ap.UserId"/>
-                        </span>
-                      }
-                    </div>
+                <a href="javascript: return false" class="modifyPerson">
+                  <span class="personDescription">@person.Description</span>
+                  @{ 
+                    var assignedPersonQuery = db.Query("SELECT * FROM PersonAssign WHERE PersonId = @0", person.Id);
+                    if (assignedPersonQuery.Count > 0) {
+                      <div class="assignedPersonParent">
+                        @foreach (var ap in assignedPersonQuery)
+                        {
+                          var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE UserId = @0", ap.UserId);
+                          <span class="assignedPersonDisplay">
+                            <img src="@Gravatar.GetUrl(user.Email, 25)" alt="gravatar" title="@user.Email" data-userId="@ap.UserId"/>
+                          </span>
+                        }
+                      </div>
+                    }
                   }
-                }
+                </a>
               </li>
               }
             }

@@ -3,19 +3,19 @@ a {
 }
 
 .newTeam {
-  margin-left: 10px;
   display: block;
+  margin-left: 10px;
 }
 
 .linkButton {
-  font-size: 1.0em;
-  font-family: 'Open Sans';
-  border: 3px solid black;
-  text-decoration: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 5px;
   background-color: #d8eb9f;
+  border: 3px solid black;
+  font-family: 'Open Sans';
+  font-size: 1.0em;
+  font-weight: bold;
+  padding: 5px;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 .deleteButton {
@@ -30,11 +30,12 @@ a {
   margin-left: 20px;
 }
 
-  .linkButton:hover, .linkButton:focus {
-    outline: none;
-    text-decoration: none;
-    background-color: #deeabd;
-  }
+.linkButton:hover, .linkButton:focus {
+  background-color: #deeabd;
+  -moz-outline: none;
+  outline: none;
+  text-decoration: none;
+}
 
 #dialog {
   display: none;
@@ -45,9 +46,9 @@ a {
 }
 
 .error {
-  margin-left: 7px;
-  display: none;
   color: Red;
+  display: none;
+  margin-left: 7px;
 }
 
 .contentContainer {
@@ -55,8 +56,8 @@ a {
 }
 
 .leftContent {
-  width: 50%;
   float: left;
+  width: 50%;
 }
 
 .rightContent {
@@ -72,28 +73,29 @@ a {
   font-size: 1.3em;
   font-weight: bold;
   list-style: none;
-  padding: 0;
   margin: 13px 0 0 0;
-  width: 30%;
   margin-bottom: 20px;
+  padding: 0;
+  width: 30%;
 }
 
   .teamList li {
-    padding: 3px 0 3px 0;
     margin: 0;
+    padding: 3px 0 3px 0;
   }
 
-  .teamList li a {
-    text-decoration: none;
-    position: relative;
-    display: block;
-    padding: 5px;
-  }
+    .teamList li a {
+      display: block;
+      padding: 5px;
+      position: relative;
+      text-decoration: none;
+    }
 
-  .teamList li a:hover, .teamList li a:focus {
-    text-decoration: none;
-    outline: none;
-  }
+    .teamList li a:hover, .teamList li a:focus {
+      -moz-outline: none;
+      outline: none;
+      text-decoration: none;
+    }
 
 .medSpacer {
   height: 7px;
@@ -108,33 +110,35 @@ a {
 }
 
 .teamList li a:hover .modifyButton {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  opacity: 0.65;
   background: url(../Images/process.png) no-repeat;
-  top: 5px;
+  height: 24px;
+  -moz-opacity: 0.65;
+  opacity: 0.65;
+  position: absolute;
   right: 5px;
+  top: 5px;
+  width: 24px;
 }
 
 .teamList li a:hover .shareButton {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  opacity: 0.65;
   background: url(../Images/users.png) no-repeat;
-  top: 5px;
+  height: 24px;
+  -moz-opacity: 0.65;
+  opacity: 0.65;
+  position: absolute;
   right: 34px;
+  top: 5px;
+  width: 24px;
 }
 
 .deletedTeam a {
+  background: #e86363;
   font-size: 0.6em;
-  background:  #e86363;
 }
 
-.deletedTeam a:hover {
-  background: #df9595;
-}
+  .deletedTeam a:hover {
+    background: #df9595;
+  }
 
 .undo {
   position: relative;
@@ -151,8 +155,8 @@ a {
 }
 
 .topBar {
-  position: relative;
   margin-bottom: 20px;
+  position: relative;
 }
 
   .topBar h1 {
@@ -161,10 +165,10 @@ a {
   }
 
 .users {
-  position: absolute;
-  top: 0px;
-  right: 30px;
   font-weight: bold;
+  position: absolute;
+  right: 30px;
+  top: 0px;
 }
 
 .avatars {
@@ -177,39 +181,40 @@ a {
 
 .rankingContainer {
   list-style: none;
-  width: 100%;
   margin: 10px 0 0 20px;
   overflow: auto;
+  width: 100%;
 }
 
-  .ranking {
-    float: left;
-    width: 250px;
-    margin: 10px 30px 150px 0;
-    background-color: #a9bc6f;
-  }
+.ranking {
+  background-color: #a9bc6f;
+  float: left;
+  margin: 10px 30px 150px 0;
+  width: 250px;
+}
 
   .ranking h3 {
+    margin: 13px 0 0 13px;
     padding: 0;
-    margin:  13px 0 0 13px;
   }
 
-  .addPerson {
-    display: block;
-    border: 2px solid #a9bc6f;
-    border-top: 2px solid #deeabd;
-    margin: 30px auto 0 auto;
-    padding: 7px;
-    text-align: right;
-    text-decoration: none;
-    text-transform: uppercase;
-  }
+.addPerson {
+  border: 2px solid #a9bc6f;
+  border-top: 2px solid #deeabd;
+  display: block;
+  margin: 30px auto 0 auto;
+  padding: 7px;
+  text-align: right;
+  text-decoration: none;
+  text-transform: uppercase;
+}
 
   .addPerson:hover, .addPerson:focus {
-    outline: none;
-    font-weight: bold;
-    border: 2px solid Black;
     background-color: #deeabd;
+    border: 2px solid Black;
+    font-weight: bold;
+    -moz-outline: none;
+    outline: none;
   }
 
 .dialogContainer {
@@ -217,42 +222,53 @@ a {
 }
 
 .peopleContainer {
-  padding: 0;
   list-style-type: none;
   min-height: 25px;
+  padding: 0;
 }
 
 .person {
-  width: 216px;
+  background-color: #deeabd;
   border: 2px solid Grey;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  border-radius: 7px;
   margin: 0 0 7px 0px;
   padding: 0;
-  background-color: #deeabd;
-  border-radius: 7px;
+  width: 216px;
 }
 
-.person a {
-  display: block;
-  padding: 4px;
-  border-radius: 4px;
-}
+  .person a {
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    display: block;
+    padding: 4px;
+  }
 
-.person a span {
+.personDescription {
   display: block;
   margin: 4px;
 }
 
 .ui-state-highlight {
   background-color: #deeabd;
-  width: 216px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
   border-radius: 4px;
   margin-bottom: 10px;
+  width: 216px;
+}
+
+.ui-state-default {
+  background-color: white;
+  background-image: none;
 }
 
 ul {
   list-style: none;
-  padding: 0;
   margin-left: 12px;
+  padding: 0;
 }
 
 .personInput {
@@ -260,19 +276,23 @@ ul {
 }
 
 .assigned {
-  border: 3px solid red;
-}
-
-.modifyPerson {
-  display: inline-block;
+  border: 2px solid #e2772a;
 }
 
 .assignedPersonParent {
-  margin-left: 7px;
+  margin-top: 7px;
+  font-size: 0;
 }
-  
+
+  .assignedPersonParent img {
+    border: none;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+  }
+
 .assignedPersonDisplay {
   display: inline-block;
-  margin-left: 1px;
-  margin-bottom: 2px;
+  margin-left: 3px;
+  margin-bottom: 3px;
 }
