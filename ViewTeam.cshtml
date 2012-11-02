@@ -207,7 +207,7 @@
             $('.error').show();
           } else {
             $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
-              rankingContainer.append('<li class="person ui-state-default" id="' + data + ' data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span class="personDescription">' + newPersonDesc + '</span></a></li>')
+              rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span class="personDescription">' + newPersonDesc + '</span></a></li>')
             });
             dialogRef.dialog('close');
           }
