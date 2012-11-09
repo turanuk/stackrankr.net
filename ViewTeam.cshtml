@@ -203,11 +203,12 @@
         var rankingContainer = $(this).prev('.peopleContainer');
         var executeAddPerson = function (dialogRef) {
           var newPersonDesc = $('#newPersonDesc').val();
+          var newPersonDescHtml = $('#newPersonDesc').html();
           if (newPersonDesc === '') {
             $('.error').show();
           } else {
             $.post('/endpoints/addperson', { RankingId: rankingId, PersonDescription: newPersonDesc }, function (data) {
-              rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span class="personDescription">' + newPersonDesc + '</span></a></li>')
+              rankingContainer.append('<li class="person ui-state-default" id="' + data + '" data-rankingId="' + rankingId + '"><a href="javascript: return false" class="modifyPerson"><span class="personDescription">' + newPersonDescHtml + '</span></a></li>')
             });
             dialogRef.dialog('close');
           }
@@ -245,18 +246,19 @@
       });
 
       $('.modifyPerson').live('click', function () {
-        var personDescription = $(this).children('span').html();
+        var personDescription = $(this).children('span').text();
         var personDescriptionDom = $(this).children('span');
         var personDom = $(this).parent('.person');
         var personId = personDom.attr('id');
         var rankingId = personDom.attr('data-rankingId');
         var executePersonUpdate = function (dialogRef) {
           var editPersonDesc = $('#editedPersonDesc').val();
+          var editPersonHtml = $('#editedPersonDesc').html();
           if (editPersonDesc === '') {
             $('.error').show();
           } else {
             $.post('/endpoints/updatePerson', { PersonId: personId, RankingId: rankingId, PersonDescription: editPersonDesc }, function () {
-              personDescriptionDom.html(editPersonDesc);
+              personDescriptionDom.html(editPersonHtml);
             });
             dialogRef.dialog('close');
           }

@@ -6,7 +6,7 @@
   } else {
     var personId = Request["PersonId"].AsInt();
     var rankingId = Request["RankingId"].AsInt();
-    var personDescription = Request["PersonDescription"];
+    var personDescription = Request.Unvalidated("PersonDescription");
     var db = Database.Open("stackRankR");
     //Pull the ranking
     var ranking = db.QuerySingle("SELECT * FROM Ranking WHERE Id = @0", rankingId);
